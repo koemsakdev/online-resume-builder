@@ -1,7 +1,7 @@
 "use client";
 
 import { CVData } from "@/types/cv";
-import { Globe, Languages, Mail, Phone, ExternalLink, Award, FolderGit2 } from "lucide-react";
+import { Globe, Languages, Mail, Phone, ExternalLink, Award, FolderGit2, Users } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import imgUser from "@/assets/person.png";
 import Image from "next/image";
@@ -96,6 +96,53 @@ const BlackWhiteMinimalist = ({
             )}
           </div>
         </section>
+
+        {/* HR Personal Details */}
+        {(contact.dateOfBirth || contact.maritalStatus || contact.nationality || contact.visaStatus || contact.drivingLicense || contact.gender) && (
+          <section className="space-y-3">
+            <h2 className="uppercase text-xs tracking-widest font-bold text-cyan-400 border-b border-slate-700 pb-1">
+              Personal Details
+            </h2>
+            <div className="space-y-2 text-xs text-slate-300">
+              {contact.dateOfBirth && (
+                <div>
+                  <span className="text-[10px] uppercase text-cyan-300/80 block font-semibold">Date of Birth</span>
+                  <span className="text-slate-200">{contact.dateOfBirth}</span>
+                </div>
+              )}
+              {contact.maritalStatus && (
+                <div>
+                  <span className="text-[10px] uppercase text-cyan-300/80 block font-semibold">Marital Status</span>
+                  <span className="text-slate-200">{contact.maritalStatus}</span>
+                </div>
+              )}
+              {contact.nationality && (
+                <div>
+                  <span className="text-[10px] uppercase text-cyan-300/80 block font-semibold">Nationality</span>
+                  <span className="text-slate-200">{contact.nationality}</span>
+                </div>
+              )}
+              {contact.gender && (
+                <div>
+                  <span className="text-[10px] uppercase text-cyan-300/80 block font-semibold">Gender</span>
+                  <span className="text-slate-200">{contact.gender}</span>
+                </div>
+              )}
+              {contact.visaStatus && (
+                <div>
+                  <span className="text-[10px] uppercase text-cyan-300/80 block font-semibold">Work Authorization</span>
+                  <span className="text-slate-200">{contact.visaStatus}</span>
+                </div>
+              )}
+              {contact.drivingLicense && (
+                <div>
+                  <span className="text-[10px] uppercase text-cyan-300/80 block font-semibold">Driving License</span>
+                  <span className="text-slate-200">{contact.drivingLicense}</span>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Education */}
         {education.length > 0 && (
@@ -263,15 +310,24 @@ const BlackWhiteMinimalist = ({
         {/* References */}
         {references.length > 0 && (
           <section className="space-y-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-800 pb-1">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-800 pb-1 flex items-center gap-1.5">
+              <Users size={14} className="text-cyan-500" />
               References
             </h2>
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               {references.map((ref, index) => (
-                <div key={index} className="space-y-0.5">
+                <div key={index} className="space-y-1 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                   <p className="font-bold text-slate-900 dark:text-white">{ref.name}</p>
-                  <p className="text-slate-600 dark:text-slate-400">{ref.position} - {ref.company}</p>
-                  {ref.email && <p className="text-slate-500 text-[11px]">{ref.email}</p>}
+                  <p className="text-slate-600 dark:text-slate-400 text-[11px] font-medium">
+                    {ref.position} {ref.company ? `• ${ref.company}` : ""}
+                  </p>
+                  {ref.relationship && (
+                    <p className="text-slate-500 text-[10px] italic">{ref.relationship}</p>
+                  )}
+                  <div className="flex flex-col gap-0.5 text-[11px] text-slate-500 pt-0.5">
+                    {ref.email && <span>{ref.email}</span>}
+                    {ref.phone && <span>{ref.phone}</span>}
+                  </div>
                 </div>
               ))}
             </div>

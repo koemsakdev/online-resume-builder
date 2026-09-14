@@ -26,6 +26,7 @@ import {
   ZoomOut,
   Maximize2,
   CheckCircle2,
+  Users,
 } from "lucide-react";
 import {
   Breadcrumb,
@@ -42,6 +43,7 @@ import ExperienceForm from "@/components/forms/experience-form";
 import SkillsForm from "@/components/forms/skills-form";
 import ProjectsForm from "@/components/forms/projects-form";
 import AdditionalInfoForm from "@/components/forms/additional-info-form";
+import ReferencesForm from "@/components/forms/references-form";
 import ResumePreview from "@/components/pages/resume-preview";
 import { toast } from "@/hooks/use-toast";
 import {
@@ -67,6 +69,7 @@ const TABS = [
   { id: "skills", label: "Skills", icon: Sparkles },
   { id: "projects", label: "Projects", icon: FolderGit2 },
   { id: "additional", label: "Certifications", icon: Award },
+  { id: "references", label: "References", icon: Users },
 ];
 
 export default function EditResumePage({ params }: ResumeEditorPageProps) {
@@ -95,6 +98,13 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
       website: "",
       linkedin: "",
       github: "",
+      dateOfBirth: "",
+      maritalStatus: "",
+      nationality: "",
+      gender: "",
+      drivingLicense: "",
+      visaStatus: "",
+      photoCrop: { x: 0, y: 0, zoom: 1 },
     },
     summary: "",
     skills: [],
@@ -133,6 +143,13 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
             location: resumeInfo?.contactInfo?.address || resumeInfo?.contactInfo?.location || "",
             linkedin: resumeInfo?.contactInfo?.linkedin || "",
             github: resumeInfo?.contactInfo?.github || "",
+            dateOfBirth: resumeInfo?.contactInfo?.dateOfBirth || "",
+            maritalStatus: resumeInfo?.contactInfo?.maritalStatus || "",
+            nationality: resumeInfo?.contactInfo?.nationality || "",
+            gender: resumeInfo?.contactInfo?.gender || "",
+            drivingLicense: resumeInfo?.contactInfo?.drivingLicense || "",
+            visaStatus: resumeInfo?.contactInfo?.visaStatus || "",
+            photoCrop: resumeInfo?.contactInfo?.photoCrop || { x: 0, y: 0, zoom: 1 },
           },
           summary:
             typeof resumeInfo?.summary === "string"
@@ -178,7 +195,14 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
           certifications: resumeInfo?.certifications || [],
           languages: resumeInfo?.languages || [],
           interests: resumeInfo?.interests || [],
-          references: resumeInfo?.references || [],
+          references: (resumeInfo?.references || []).map((ref: any) => ({
+            name: ref?.name || "",
+            company: ref?.company || "",
+            position: ref?.position || "",
+            email: ref?.email || "",
+            phone: ref?.phone || "",
+            relationship: ref?.relationship || "",
+          })),
         });
       }
     } catch (error) {
@@ -209,6 +233,13 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
           portfolio: resumeData.contact?.portfolio || "",
           linkedin: resumeData.contact?.linkedin || "",
           github: resumeData.contact?.github || "",
+          dateOfBirth: resumeData.contact?.dateOfBirth || "",
+          maritalStatus: resumeData.contact?.maritalStatus || "",
+          nationality: resumeData.contact?.nationality || "",
+          gender: resumeData.contact?.gender || "",
+          drivingLicense: resumeData.contact?.drivingLicense || "",
+          visaStatus: resumeData.contact?.visaStatus || "",
+          photoCrop: resumeData.contact?.photoCrop || { x: 0, y: 0, zoom: 1 },
         },
         skills: resumeData.skills.map((s) => ({
           skillName: s.name || s.skillName,
@@ -362,6 +393,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
     if (resumeData.skills && resumeData.skills.length > 0) count++;
     if (resumeData.projects && resumeData.projects.length > 0) count++;
     if (resumeData.certifications && resumeData.certifications.length > 0) count++;
+    if (resumeData.references && resumeData.references.length > 0) count++;
     return count;
   }, [resumeData]);
 
@@ -418,6 +450,15 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
           <AdditionalInfoForm
             resumeData={resumeData}
             setResumeData={setResumeData}
+          />
+        );
+      case "references":
+        return (
+          <ReferencesForm
+            referencesData={resumeData.references || []}
+            updateArrayItem={(idx, key, val) => updateArrayItem("references", idx, key, val)}
+            addArrayItem={(item) => addArrayItem("references", item)}
+            removeArrayItem={(idx) => removeArrayItem("references", idx)}
           />
         );
       default:
@@ -543,7 +584,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-              <span className="font-semibold text-cyan-300">{completedSections} / 6</span>
+              <span className="font-semibold text-cyan-300">{completedSections} / 7</span>
               <span>Sections Ready</span>
             </div>
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 uppercase tracking-wider">

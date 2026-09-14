@@ -175,6 +175,53 @@ const ProfessionalMinimalist = ({
               ))}
             </section>
           )}
+
+          {/* Personal Details */}
+          {(resumeData.contact.dateOfBirth || resumeData.contact.maritalStatus || resumeData.contact.nationality || resumeData.contact.visaStatus || resumeData.contact.drivingLicense || resumeData.contact.gender) && (
+            <section className="mb-6">
+              <h2 className="uppercase text-lg tracking-wider font-extrabold mb-3">
+                Personal Info
+              </h2>
+              <div className="space-y-2 text-xs text-gray-600 dark:text-slate-400">
+                {resumeData.contact.dateOfBirth && (
+                  <div>
+                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Date of Birth</span>
+                    <span>{resumeData.contact.dateOfBirth}</span>
+                  </div>
+                )}
+                {resumeData.contact.maritalStatus && (
+                  <div>
+                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Marital Status</span>
+                    <span>{resumeData.contact.maritalStatus}</span>
+                  </div>
+                )}
+                {resumeData.contact.nationality && (
+                  <div>
+                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Nationality</span>
+                    <span>{resumeData.contact.nationality}</span>
+                  </div>
+                )}
+                {resumeData.contact.gender && (
+                  <div>
+                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Gender</span>
+                    <span>{resumeData.contact.gender}</span>
+                  </div>
+                )}
+                {resumeData.contact.visaStatus && (
+                  <div>
+                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Work Authorization</span>
+                    <span>{resumeData.contact.visaStatus}</span>
+                  </div>
+                )}
+                {resumeData.contact.drivingLicense && (
+                  <div>
+                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Driving License</span>
+                    <span>{resumeData.contact.drivingLicense}</span>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
         </div>
         <div className="w-2/3 px-6 py-4">
           {/* Summary */}
@@ -232,9 +279,14 @@ const ProfessionalMinimalist = ({
                     <h3 className="font-extrabold text-lg text-gray-900 dark:text-slate-200">
                       {ref.company}
                     </h3>
-                    <h3 className="text-base text-gray-800 dark:text-slate-200 mb-2">
+                    <h3 className="text-base text-gray-800 dark:text-slate-200 mb-1">
                       {ref.name} / {ref.position}
                     </h3>
+                    {ref.relationship && (
+                      <p className="text-xs text-gray-500 dark:text-slate-400 italic mb-1.5">
+                        {ref.relationship}
+                      </p>
+                    )}
                     <p className="text-sm">
                       <strong>Phone: </strong>{" "}
                       <span className="text-gray-600 dark:text-slate-400">

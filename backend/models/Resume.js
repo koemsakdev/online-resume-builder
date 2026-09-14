@@ -85,6 +85,35 @@ const ResumeSchema = new mongoose.Schema({
         portfolio: {
             type: String,
             default: ''
+        },
+        dateOfBirth: {
+            type: String,
+            default: ''
+        },
+        maritalStatus: {
+            type: String,
+            default: ''
+        },
+        nationality: {
+            type: String,
+            default: ''
+        },
+        gender: {
+            type: String,
+            default: ''
+        },
+        drivingLicense: {
+            type: String,
+            default: ''
+        },
+        visaStatus: {
+            type: String,
+            default: ''
+        },
+        photoCrop: {
+            x: { type: Number, default: 0 },
+            y: { type: Number, default: 0 },
+            zoom: { type: Number, default: 1 }
         }
     },
     summary: {

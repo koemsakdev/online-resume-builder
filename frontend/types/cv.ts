@@ -12,6 +12,17 @@ export interface ContactInfo {
   website?: string;
   linkedin?: string;
   github?: string;
+  dateOfBirth?: string;
+  maritalStatus?: string;
+  nationality?: string;
+  gender?: string;
+  drivingLicense?: string;
+  visaStatus?: string;
+  photoCrop?: {
+    x: number;
+    y: number;
+    zoom: number;
+  };
 }
 
 export interface ExperienceItem {

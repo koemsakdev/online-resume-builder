@@ -104,6 +104,53 @@ const WhiteSimpleCollegeAndFreshGraduate = ({
             </div>
           </section>
 
+          {/* Personal Details */}
+          {(resumeData.contact.dateOfBirth || resumeData.contact.maritalStatus || resumeData.contact.nationality || resumeData.contact.visaStatus || resumeData.contact.drivingLicense || resumeData.contact.gender) && (
+            <section className="mb-6 w-full">
+              <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-neutral-200 dark:bg-neutral-800 dark:text-slate-200 rounded-sm">
+                Personal Details
+              </h2>
+              <div className="space-y-2 px-3 py-3 text-xs text-gray-700 dark:text-slate-300">
+                {resumeData.contact.dateOfBirth && (
+                  <div>
+                    <span className="font-bold block text-[10px] uppercase text-gray-500">Date of Birth:</span>
+                    <span>{resumeData.contact.dateOfBirth}</span>
+                  </div>
+                )}
+                {resumeData.contact.maritalStatus && (
+                  <div>
+                    <span className="font-bold block text-[10px] uppercase text-gray-500">Marital Status:</span>
+                    <span>{resumeData.contact.maritalStatus}</span>
+                  </div>
+                )}
+                {resumeData.contact.nationality && (
+                  <div>
+                    <span className="font-bold block text-[10px] uppercase text-gray-500">Nationality:</span>
+                    <span>{resumeData.contact.nationality}</span>
+                  </div>
+                )}
+                {resumeData.contact.gender && (
+                  <div>
+                    <span className="font-bold block text-[10px] uppercase text-gray-500">Gender:</span>
+                    <span>{resumeData.contact.gender}</span>
+                  </div>
+                )}
+                {resumeData.contact.visaStatus && (
+                  <div>
+                    <span className="font-bold block text-[10px] uppercase text-gray-500">Work Authorization:</span>
+                    <span>{resumeData.contact.visaStatus}</span>
+                  </div>
+                )}
+                {resumeData.contact.drivingLicense && (
+                  <div>
+                    <span className="font-bold block text-[10px] uppercase text-gray-500">Driving License:</span>
+                    <span>{resumeData.contact.drivingLicense}</span>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
           {/* Education */}
           <section className="mb-6 w-full">
             <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-neutral-200 dark:bg-neutral-800 dark:text-slate-200 rounded-sm">
@@ -244,9 +291,14 @@ const WhiteSimpleCollegeAndFreshGraduate = ({
                     <h3 className="font-extrabold text-lg text-gray-900 dark:text-slate-200">
                       {ref.company}
                     </h3>
-                    <h3 className="text-base text-gray-800 dark:text-slate-200 mb-2">
+                    <h3 className="text-base text-gray-800 dark:text-slate-200 mb-1">
                       {ref.name} / {ref.position}
                     </h3>
+                    {ref.relationship && (
+                      <p className="text-xs text-gray-500 dark:text-slate-400 italic mb-1.5">
+                        {ref.relationship}
+                      </p>
+                    )}
                     <p className="text-sm">
                       <strong>Phone: </strong>{" "}
                       <span className="text-gray-600 dark:text-slate-400">
