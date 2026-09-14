@@ -1,0 +1,261 @@
+"use client";
+
+import { CVData } from "@/types/cv";
+import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import imgUser from "@/assets/person.png";
+import { Globe, Inbox, PhoneCall } from "lucide-react";
+import { Separator } from "../ui/separator";
+import { formatSafeDate } from "@/lib/utils";
+
+interface ProfessionalMinimalistProps {
+  resumeData: CVData;
+  containerWidth: number;
+}
+
+const ProfessionalMinimalist = ({
+  resumeData,
+  containerWidth,
+}: ProfessionalMinimalistProps) => {
+  const resumeRef = useRef(null);
+  const [baseWidth, setBaseWidth] = useState(800);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const actualBaseWidth = (resumeRef.current as unknown as HTMLDivElement)
+      ?.offsetWidth;
+    setBaseWidth(actualBaseWidth);
+    setScale(containerWidth / actualBaseWidth);
+  }, [containerWidth]);
+
+  return (
+    <div
+      ref={resumeRef}
+      className="border shadow-sm rounded-sm px-5 py-16"
+      style={{
+        transform: containerWidth > 0 ? `scale(${scale})` : `none`,
+        transformOrigin: "top left",
+        width: containerWidth > 0 ? `${baseWidth}px` : `auto`,
+        height: "auto",
+      }}
+    >
+      {/* Contact Information */}
+      <div className="w-full flex">
+        <div className="w-1/3 px-4">
+          {resumeData?.contact?.profile && (
+            <div className="size-[180px]">
+              <Image
+                src={resumeData?.contact?.profile || imgUser}
+                alt="profile"
+                width={180}
+                height={180}
+                className="rounded-full object-cover border-8 border-slate-300 shadow-lg"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="w-2/3 px-4 space-y-6">
+          <div className="space-y-2">
+            <h2 className="text-4xl font-bold uppercase">{resumeData.name}</h2>
+            <h2 className="text-xl font-light">{resumeData.title}</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              {resumeData.contact.email && (
+                <div className="flex items-center gap-x-2">
+                  <div className="bg-slate-600 dark:bg-slate-700 text-white dark:text-slate-200 p-1 rounded-sm">
+                    <Inbox className="size-4" />
+                  </div>
+                  <span className="text-sm">{resumeData.contact.email}</span>
+                </div>
+              )}
+            </div>
+            <div>
+              {resumeData.contact.phone && (
+                <div className="flex items-center gap-x-2">
+                  <div className="bg-slate-600 dark:bg-slate-700 text-white dark:text-slate-200 p-1 rounded-sm">
+                    <PhoneCall className="size-4" />
+                  </div>
+                  <span className="text-sm">{resumeData.contact.phone}</span>
+                </div>
+              )}
+            </div>
+            <div className="col-span-2">
+              {resumeData.contact.location && (
+                <div className="flex items-center gap-x-2">
+                  <div className="bg-slate-600 dark:bg-slate-700 text-white dark:text-slate-200 p-1 rounded-sm">
+                    <Globe className="size-4" />
+                  </div>
+                  <span className="text-sm">{resumeData.contact.location}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      <Separator className="my-12" />
+      <div className="flex">
+        <div className="w-1/3 px-4 py-4 border-r">
+          {/* Education */}
+          <section className="mb-6">
+            <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3">
+              Education
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {resumeData.education.map((edu, index) => (
+                <div key={index} className="flex flex-col">
+                  <span className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                    {edu.degree}
+                  </span>
+                  <span className="text-base text-slate-600 font-bold dark:text-slate-200">
+                    {edu.university}
+                  </span>
+                  <span className="text-sm text-slate-800 dark:text-slate-200">
+                    {formatSafeDate(edu.startDate, "MMM yyyy")} -{" "}
+                    {formatSafeDate(edu.endDate, "MMM yyyy")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Skills */}
+          <section className="mb-6">
+            <h2 className="uppercase text-lg tracking-wider font-extrabold mb-3">
+              Skills
+            </h2>
+            <ul className="list-disc list-outside ml-5 text-gray-600 dark:text-slate-200 space-y-1">
+              {resumeData.skills.map((skill, index) => (
+                <li
+                  key={index}
+                  className="text-gray-600 dark:text-slate-400 text-sm"
+                >
+                  {skill.name}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Languages */}
+          {resumeData.languages && resumeData.languages.length > 0 && (
+            <section className="mb-6">
+              <h2 className="uppercase text-lg tracking-wider font-extrabold mb-3">
+                Languages
+              </h2>
+              {resumeData.languages.map((lang, index) => (
+                <div key={index} className="mb-2">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="text-xs">{lang.language}</span>
+                    <span className="text-xs">{lang.proficiency}</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-1">
+                    <div
+                      className="bg-blue-400 dark:bg-sky-700 h-1 rounded-full"
+                      style={{
+                        width:
+                          lang.proficiency === "Native"
+                            ? "100%"
+                            : lang.proficiency === "Fluent"
+                            ? "90%"
+                            : lang.proficiency === "Advanced"
+                            ? "75%"
+                            : lang.proficiency === "Intermediate"
+                            ? "50%"
+                            : "25%",
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
+        </div>
+        <div className="w-2/3 px-6 py-4">
+          {/* Summary */}
+          <section className="mb-6">
+            <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3">
+              Profile
+            </h2>
+            <p className="text-gray-600 dark:text-slate-400">
+              {resumeData.summary}
+            </p>
+          </section>
+
+          {/* Experience */}
+          <section className="mb-6">
+            <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3">
+              Work Experience
+            </h2>
+            {resumeData.experience.map((exp, index) => (
+              <div key={index} className="mb-4">
+                <div className="flex justify-between text-lg">
+                  <p className="font-bold text-gray-900 dark:text-slate-200 mb-1">
+                    {exp.company}
+                  </p>
+                  <span className="font-bold text-gray-900 dark:text-slate-300 ">
+                    {formatSafeDate(exp.startDate, "yyyy")} -{" "}
+                    {formatSafeDate(exp.endDate, "yyyy")}
+                  </span>
+                </div>
+                <h3 className="text-gray-700 dark:text-slate-300">
+                  {exp.title}
+                </h3>
+                <ul className="list-disc list-outside ml-5 text-sm text-gray-600 dark:text-slate-200 space-y-1">
+                  {exp.responsibilities.map((resp, idx) => (
+                    <li
+                      key={idx}
+                      className="text-gray-700 dark:text-slate-300 text-sm"
+                    >
+                      {resp}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+
+          {/* References - Hidden by default, shown on request */}
+          {resumeData.references && resumeData.references.length > 0 && (
+            <section className="mb-6">
+              <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3">
+                References
+              </h2>
+              <div className="grid grid-cols-2 lg:grid-cols-2 lg:text-left gap-4">
+                {resumeData.references.map((ref, index) => (
+                  <div key={index} className="mb-4">
+                    <h3 className="font-extrabold text-lg text-gray-900 dark:text-slate-200">
+                      {ref.company}
+                    </h3>
+                    <h3 className="text-base text-gray-800 dark:text-slate-200 mb-2">
+                      {ref.name} / {ref.position}
+                    </h3>
+                    <p className="text-sm">
+                      <strong>Phone: </strong>{" "}
+                      <span className="text-gray-600 dark:text-slate-400">
+                        {ref.phone}
+                      </span>
+                    </p>
+                    <p className="text-sm">
+                      <strong>Email: </strong>{" "}
+                      <span className="text-gray-600 dark:text-slate-400">
+                        {ref.email}
+                      </span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProfessionalMinimalist;

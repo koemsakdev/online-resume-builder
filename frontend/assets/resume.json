@@ -1,0 +1,91 @@
+{
+  "name": "Jane Smith",
+  "title": "Lead Software Engineer",
+  "contact": {
+    "profile": "https://mediaassets.cbre.com/-/media/project/cbre/shared-site/canada-emerald/canada-headshots/jonathan-turk-752x752.jpg",
+    "email": "jane.smith@example.com",
+    "phone": "(987) 654-3210",
+    "portfolio": "https://janesmithportfolio.com",
+    "location": "#371, 123 Main St, San Francisco, CA 94105"
+  },
+  "summary": "Dynamic and results-driven software engineer with over 5 years of experience in full-stack development. Proven track record of leading teams to deliver high-quality software solutions on time and within budget. Passionate about leveraging technology to solve complex problems and enhance user experiences.",
+  "skills": [
+    "JavaScript (ES6+)",
+    "Node.js",
+    "Python",
+    "SQL",
+    "Docker",
+    "Agile Methodologies",
+    "Problem Solving",
+    "Team Leadership",
+    "Project Management",
+    "Public Relations"
+  ],
+  "experience": [
+    {
+      "title": "Lead Software Engineer",
+      "company": "Innovate Tech Solutions",
+      "dates": "March 2021 - Present",
+      "responsibilities": [
+        "Lead the team of developers in designing and implementing software solutions.",
+        "Conduct code reviews and provide mentorship to junior developers.",
+        "Collaborate with cross-functional teams to define project requirements and deliverables.",
+        "Manage project timelines and ensure adherence to Agile methodologies.",
+        "Develop and maintain RESTful APIs and microservices architecture.",
+        "Optimize application performance and scalability."
+      ]
+    },
+    {
+      "title": "Software Developer",
+      "company": "NextGen Startups",
+      "dates": "June 2018 - February 2021",
+      "responsibilities": [
+        "Developed and maintained web applications using React, Node.js, and MongoDB.",
+        "Collaborated with UX/UI designers to create user-friendly interfaces.",
+        "Implemented RESTful APIs and integrated third-party services.",
+        "Participated in Agile ceremonies including sprint planning and retrospectives.",
+        "Conducted unit testing and debugging to ensure software quality.",
+        "Worked closely with product managers to gather requirements and provide technical solutions."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "institution": "University of California, Berkeley",
+      "dates": "2016 - 2018"
+    },
+    {
+      "degree": "Bachelor of Science in Software Engineering",
+      "institution": "Texas A&M University",
+      "dates": "2012 - 2016"
+    }
+  ],
+  "languages": [
+    {
+      "language": "English",
+      "proficiency": "Native"
+    },
+    {
+      "language": "Spanish",
+      "proficiency": "Conversational"
+    }
+  ],
+  "interests": ["Reading books", "Playing video games", "Watching movies"],
+  "references": [
+    {
+      "name": "John Doe",
+      "company": "ABC Technologies",
+      "position": "Senior Software Engineer",
+      "email": "jane.smith@example.com",
+      "phone": "(123) 456-7890"
+    },
+    {
+      "name": "Jane Doe",
+      "company": "XYZ Corp",
+      "position": "Project Manager",
+      "email": "jane.smith@example.com",
+      "phone": "(987) 654-3210"
+    }
+  ]
+}

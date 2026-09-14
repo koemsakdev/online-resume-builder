@@ -1,0 +1,226 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 15, 23, 42;
+  --background-start-rgb: 248, 250, 252;
+  --background-end-rgb: 255, 255, 255;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@layer base {
+  :root {
+    --background: 220 20% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 28% 95%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 215 28% 95%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 265 89% 66%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 199 89% 48%;
+    --radius: 0.75rem;
+
+    --brand-cyan: #00D2FF;
+    --brand-purple: #8B5CF6;
+    --brand-pink: #D946EF;
+
+    --sidebar-background: 220 20% 98%;
+    --sidebar-foreground: 222 47% 15%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 28% 93%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 90%;
+    --sidebar-ring: 199 89% 48%;
+  }
+
+  .dark {
+    --background: 224 71% 4%; /* Deep Space Midnight Navy matching RB logo */
+    --foreground: 210 40% 98%;
+    --card: 224 60% 7%;
+    --card-foreground: 210 40% 98%;
+    --popover: 224 60% 7%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 224 71% 4%;
+    --secondary: 224 50% 12%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 224 45% 12%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 265 89% 66%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 224 40% 16%;
+    --input: 224 40% 16%;
+    --ring: 199 89% 48%;
+
+    --sidebar-background: 224 68% 5%;
+    --sidebar-foreground: 210 40% 92%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 224 45% 12%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 224 40% 14%;
+    --sidebar-ring: 199 89% 48%;
+  }
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Brand Gradients based on rb-logo.png */
+.brand-gradient-text {
+  background: linear-gradient(135deg, #00D2FF 0%, #38BDF8 35%, #8B5CF6 75%, #D946EF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-gradient-btn {
+  background: linear-gradient(135deg, #00D2FF 0%, #0284C7 40%, #7C3AED 85%, #C026D3 100%);
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.brand-gradient-btn:hover {
+  opacity: 0.95;
+  box-shadow: 0 8px 25px -4px rgba(0, 210, 255, 0.4), 0 4px 15px -2px rgba(139, 92, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+.glass-card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.light .glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.glass-panel {
+  background: rgba(11, 19, 43, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 210, 255, 0.15);
+}
+
+/* Glowing Ambience */
+.cyan-glow {
+  background: radial-gradient(circle at center, rgba(0, 210, 255, 0.25) 0%, rgba(0, 210, 255, 0) 70%);
+  filter: blur(60px);
+}
+
+.purple-glow {
+  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.22) 0%, rgba(139, 92, 246, 0) 70%);
+  filter: blur(70px);
+}
+
+.logo-glow {
+  filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.45)) drop-shadow(0 0 24px rgba(139, 92, 246, 0.3));
+}
+
+.feature-card-glow {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.feature-card-glow:hover {
+  border-color: rgba(0, 210, 255, 0.4);
+  box-shadow: 0 12px 30px -10px rgba(0, 210, 255, 0.15), 0 4px 20px -5px rgba(139, 92, 246, 0.2);
+  transform: translateY(-3px);
+}
+
+/* Sleek Modern Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.28);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 255, 0.55);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 255, 0.6);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 255, 0.6);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
