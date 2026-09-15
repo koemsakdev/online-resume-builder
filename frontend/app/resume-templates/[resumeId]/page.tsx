@@ -27,6 +27,7 @@ import {
   Maximize2,
   CheckCircle2,
   Users,
+  SkipForward,
 } from "lucide-react";
 import {
   Breadcrumb,
@@ -55,6 +56,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { templateList } from "@/constants";
+import AuthGuard from "@/components/auth/auth-guard";
 
 interface ResumeEditorPageProps {
   params: {
@@ -63,25 +65,38 @@ interface ResumeEditorPageProps {
 }
 
 const TABS = [
-  { id: "profile", label: "Profile", icon: User },
-  { id: "experience", label: "Experience", icon: Briefcase },
-  { id: "education", label: "Education", icon: GraduationCap },
-  { id: "skills", label: "Skills", icon: Sparkles },
-  { id: "projects", label: "Projects", icon: FolderGit2 },
-  { id: "additional", label: "Certifications", icon: Award },
-  { id: "references", label: "References", icon: Users },
+  { id: "profile", label: "Profile", icon: User, optional: false },
+  { id: "experience", label: "Experience", icon: Briefcase, optional: false },
+  { id: "education", label: "Education", icon: GraduationCap, optional: false },
+  { id: "skills", label: "Skills", icon: Sparkles, optional: false },
+  { id: "projects", label: "Projects", icon: FolderGit2, optional: true },
+  { id: "additional", label: "Certifications", icon: Award, optional: true },
+  { id: "references", label: "References", icon: Users, optional: true },
 ];
 
 export default function EditResumePage({ params }: ResumeEditorPageProps) {
   const { resumeId }: { resumeId: string } = params;
   const router = useRouter();
-  const resumeRef = useRef<HTMLDivElement>(null);
-
-  const [baseWidth, setBaseWidth] = useState(800);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(540);
   const [currentTab, setCurrentTab] = useState("profile");
   const [isSaving, setIsSaving] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("black_white_minimalist");
   const [zoomLevel, setZoomLevel] = useState(1);
+
+  useEffect(() => {
+    if (!previewContainerRef.current) return;
+    const updateWidth = () => {
+      if (previewContainerRef.current) {
+        const w = previewContainerRef.current.offsetWidth - 32;
+        if (w > 0) setContainerWidth(w);
+      }
+    };
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(previewContainerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const [resumeData, setResumeData] = useState<CVData>({
     name: "",
@@ -367,21 +382,10 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
     });
   };
 
-  const updateBaseWidth = () => {
-    if (resumeRef.current) {
-      setBaseWidth(resumeRef.current.offsetWidth || 800);
-    }
-  };
-
   useEffect(() => {
-    updateBaseWidth();
-    window.addEventListener("resize", updateBaseWidth);
     if (resumeId) {
       fetchResumeData(resumeId);
     }
-    return () => {
-      window.removeEventListener("resize", updateBaseWidth);
-    };
   }, [resumeId]);
 
   // Section completion calculator
@@ -396,6 +400,51 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
     if (resumeData.references && resumeData.references.length > 0) count++;
     return count;
   }, [resumeData]);
+
+  // Skip current section handler: clears empty drafts and advances to next tab
+  const handleSkipSection = () => {
+    const currentIndex = TABS.findIndex((t) => t.id === currentTab);
+    const tab = TABS[currentIndex];
+
+    // Clean up empty dummy items in current section so empty entries aren't saved
+    if (tab.id === "projects") {
+      setResumeData((prev) => ({
+        ...prev,
+        projects: (prev.projects || []).filter((p) => p.title?.trim()),
+      }));
+    } else if (tab.id === "additional") {
+      setResumeData((prev) => ({
+        ...prev,
+        certifications: (prev.certifications || []).filter((c) => c.name?.trim()),
+        languages: (prev.languages || []).filter((l) => l.language?.trim()),
+      }));
+    } else if (tab.id === "references") {
+      setResumeData((prev) => ({
+        ...prev,
+        references: (prev.references || []).filter((r) => r.name?.trim()),
+      }));
+    } else if (tab.id === "experience") {
+      setResumeData((prev) => ({
+        ...prev,
+        experience: (prev.experience || []).filter((e) => e.title?.trim() || e.company?.trim()),
+      }));
+    } else if (tab.id === "education") {
+      setResumeData((prev) => ({
+        ...prev,
+        education: (prev.education || []).filter((e) => e.degree?.trim() || e.university?.trim()),
+      }));
+    }
+
+    if (currentIndex < TABS.length - 1) {
+      setCurrentTab(TABS[currentIndex + 1].id);
+      toast({
+        title: `Skipped ${tab.label}`,
+        description: "Empty sections won't appear on your resume.",
+      });
+    } else {
+      handleSave(true);
+    }
+  };
 
   const renderCurrentForm = () => {
     switch (currentTab) {
@@ -443,6 +492,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
             updateArrayItem={(idx, key, val) => updateArrayItem("projects", idx, key, val)}
             addArrayItem={(item) => addArrayItem("projects", item)}
             removeArrayItem={(idx) => removeArrayItem("projects", idx)}
+            onSkipSection={handleSkipSection}
           />
         );
       case "additional":
@@ -450,6 +500,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
           <AdditionalInfoForm
             resumeData={resumeData}
             setResumeData={setResumeData}
+            onSkipSection={handleSkipSection}
           />
         );
       case "references":
@@ -459,6 +510,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
             updateArrayItem={(idx, key, val) => updateArrayItem("references", idx, key, val)}
             addArrayItem={(item) => addArrayItem("references", item)}
             removeArrayItem={(idx) => removeArrayItem("references", idx)}
+            onSkipSection={handleSkipSection}
           />
         );
       default:
@@ -467,19 +519,20 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
   };
 
   return (
-    <NavbarLayout>
-      <div className="relative min-h-[calc(100vh-4rem)] w-full bg-[#0B1120] text-slate-100 p-4 sm:p-6 lg:p-8 space-y-6">
+    <AuthGuard>
+      <NavbarLayout>
+        <div className="relative min-h-[calc(100vh-4rem)] w-full bg-gradient-to-b from-slate-50/80 via-background to-slate-100/50 dark:from-[#0B1120] dark:via-background dark:to-[#080d19] text-foreground p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Background Ambient Glows */}
-        <div className="absolute top-0 right-1/3 w-[500px] h-[500px] cyan-glow pointer-events-none opacity-15 -z-10" />
-        <div className="absolute bottom-1/4 left-10 w-[400px] h-[400px] purple-glow pointer-events-none opacity-15 -z-10" />
+        <div className="absolute top-0 right-1/3 w-[500px] h-[500px] cyan-glow pointer-events-none opacity-10 dark:opacity-20 -z-10" />
+        <div className="absolute bottom-1/4 left-10 w-[400px] h-[400px] purple-glow pointer-events-none opacity-10 dark:opacity-20 -z-10" />
 
         {/* Breadcrumb Navigation & Top Action Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/50 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/dashboard" className="text-muted-foreground hover:text-cyan-400">
+                  <Link href="/dashboard" className="text-muted-foreground hover:text-cyan-500">
                     Dashboard
                   </Link>
                 </BreadcrumbLink>
@@ -487,14 +540,14 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/resume-templates" className="text-muted-foreground hover:text-cyan-400">
+                  <Link href="/resume-templates" className="text-muted-foreground hover:text-cyan-500">
                     Templates
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage className="text-cyan-300 font-semibold">Studio Editor</BreadcrumbPage>
+                <BreadcrumbPage className="text-cyan-600 dark:text-cyan-300 font-semibold">Studio Editor</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -507,7 +560,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-cyan-500/30 bg-card/60 text-cyan-400 hover:bg-cyan-500/10 rounded-xl"
+                  className="border-cyan-500/30 bg-card text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/10 rounded-xl shadow-sm"
                 >
                   <Replace className="w-3.5 h-3.5 mr-1.5" />
                   <span>Layout</span>
@@ -543,7 +596,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
               size="sm"
               onClick={handlePrint}
               variant="outline"
-              className="border-purple-500/30 bg-card/60 text-purple-300 hover:bg-purple-500/10 rounded-xl"
+              className="border-purple-500/30 bg-card text-purple-700 dark:text-purple-300 hover:bg-purple-500/10 rounded-xl shadow-sm"
             >
               <LucidePrinter className="w-3.5 h-3.5 mr-1.5" />
               <span>Print / PDF</span>
@@ -554,7 +607,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
               size="sm"
               variant="destructive"
               onClick={handleDelete}
-              className="rounded-xl text-xs"
+              className="rounded-xl text-xs shadow-sm"
             >
               <Trash2 className="w-3.5 h-3.5 mr-1.5" />
               <span className="hidden sm:inline">Delete</span>
@@ -574,7 +627,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
         </div>
 
         {/* Title Bar & Progress Tracker */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-border/80 bg-card/90 dark:bg-card/70 backdrop-blur-md shadow-sm shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/20">
           <div className="flex-1 max-w-md">
             <InputTitle
               title={resumeData.title || ""}
@@ -583,11 +636,12 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-              <span className="font-semibold text-cyan-300">{completedSections} / 7</span>
-              <span>Sections Ready</span>
+              <CheckCircle2 className="w-4 h-4 text-cyan-500" />
+              <span className="font-semibold text-cyan-600 dark:text-cyan-300">{completedSections}</span>
+              <span>Sections Active</span>
+              <span className="text-[11px] text-muted-foreground hidden md:inline">• skipped sections stay hidden</span>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 uppercase tracking-wider">
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/20 uppercase tracking-wider">
               {templateList.find((t) => t.id === selectedTemplate)?.name || "Modern"}
             </span>
           </div>
@@ -597,10 +651,10 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* Left Form Builder (6 cols on lg) */}
-          <div className="lg:col-span-6 rounded-3xl border border-border/80 bg-card/80 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col">
+          <div className="lg:col-span-6 rounded-3xl border border-border/80 bg-card/90 dark:bg-card/75 backdrop-blur-xl shadow-md shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/30 overflow-hidden flex flex-col">
             
             {/* Section Tab Bar */}
-            <div className="flex overflow-x-auto border-b border-border/60 bg-muted/30 p-2 gap-1.5 scrollbar-none">
+            <div className="flex overflow-x-auto border-b border-border/60 bg-muted/40 dark:bg-muted/20 p-2 gap-1.5 scrollbar-none">
               {TABS.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = currentTab === tab.id;
@@ -608,14 +662,25 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
                   <button
                     key={tab.id}
                     onClick={() => setCurrentTab(tab.id)}
-                    className={`flex items-center gap-2 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all whitespace-nowrap ${
                       isActive
-                        ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent"
+                        ? "bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/60 border border-transparent"
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="w-3.5 h-3.5 shrink-0" />
                     <span>{tab.label}</span>
+                    {tab.optional && (
+                      <span
+                        className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${
+                          isActive
+                            ? "bg-cyan-500/25 text-cyan-800 dark:text-cyan-200"
+                            : "bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        Opt
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -627,7 +692,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
             </div>
 
             {/* Bottom Form Navigation Bar */}
-            <div className="p-4 border-t border-border/60 flex items-center justify-between bg-muted/30 mt-auto">
+            <div className="p-4 border-t border-border/60 flex items-center justify-between bg-muted/30 dark:bg-muted/20 mt-auto gap-2 flex-wrap">
               <Button
                 variant="ghost"
                 size="sm"
@@ -641,33 +706,48 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Previous
               </Button>
 
-              <Button
-                size="sm"
-                onClick={() => {
-                  const currentIndex = TABS.findIndex((t) => t.id === currentTab);
-                  if (currentIndex < TABS.length - 1) {
-                    setCurrentTab(TABS[currentIndex + 1].id);
-                  } else {
-                    handleSave(true);
-                  }
-                }}
-                className="brand-gradient-btn rounded-xl text-xs font-semibold shadow-md shadow-cyan-500/20"
-              >
-                {currentTab === TABS[TABS.length - 1].id ? "Save Resume" : "Next Section"}
-                <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
+              <div className="flex items-center gap-2">
+                {currentTab !== TABS[TABS.length - 1].id && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSkipSection}
+                    className="text-xs rounded-xl border-border/80 hover:bg-muted/80 text-muted-foreground hover:text-foreground shadow-sm"
+                    title="Skip this section and leave it off your resume"
+                  >
+                    <span>Skip Section</span>
+                    <SkipForward className="w-3.5 h-3.5 ml-1.5" />
+                  </Button>
+                )}
+
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    const currentIndex = TABS.findIndex((t) => t.id === currentTab);
+                    if (currentIndex < TABS.length - 1) {
+                      setCurrentTab(TABS[currentIndex + 1].id);
+                    } else {
+                      handleSave(true);
+                    }
+                  }}
+                  className="brand-gradient-btn rounded-xl text-xs font-semibold shadow-md shadow-cyan-500/20"
+                >
+                  {currentTab === TABS[TABS.length - 1].id ? "Save Resume" : "Next Section"}
+                  <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Button>
+              </div>
             </div>
           </div>
 
           {/* Right Live Preview Area (6 cols on lg) */}
           <div className="lg:col-span-6 sticky top-24 space-y-3">
-            <div className="p-4 rounded-3xl border border-border/80 bg-card/80 backdrop-blur-xl space-y-4 shadow-2xl">
+            <div className="p-4 rounded-3xl border border-border/80 bg-card/90 dark:bg-card/75 backdrop-blur-xl space-y-4 shadow-md shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/30">
               
               {/* Preview Header & Controls */}
               <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-cyan-300">
+                  <span className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-300">
                     Live Real-Time Preview
                   </span>
                 </div>
@@ -676,7 +756,7 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
                 </span>
 
                 {/* Zoom & Scaling Controls */}
-                <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-xl border border-border/60">
+                <div className="flex items-center gap-1 bg-muted/60 dark:bg-muted/40 p-1 rounded-xl border border-border/60">
                   <Button
                     type="button"
                     variant="ghost"
@@ -714,26 +794,47 @@ export default function EditResumePage({ params }: ResumeEditorPageProps) {
               </div>
 
               {/* Preview Canvas Container */}
-              <div
-                ref={resumeRef}
-                style={{
-                  transform: zoomLevel !== 1 ? `scale(${zoomLevel})` : undefined,
-                  transformOrigin: "top center",
-                  transition: "transform 0.2s ease",
-                }}
-                className="w-full overflow-hidden rounded-2xl border border-border/60 bg-white shadow-2xl p-2 min-h-[500px]"
-              >
-                <ResumePreview
-                  templateName={selectedTemplate}
-                  resumeData={resumeData}
-                  containerWidth={baseWidth}
-                />
-              </div>
+              {(() => {
+                const fitScale = Math.min(1, containerWidth / 800);
+                const currentScale = fitScale * zoomLevel;
+                return (
+                  <div
+                    ref={previewContainerRef}
+                    className="w-full flex justify-center items-start overflow-x-auto p-4 sm:p-5 bg-slate-200/60 dark:bg-slate-950/70 rounded-2xl border border-border/70 min-h-[600px] shadow-inner"
+                  >
+                    <div
+                      style={{
+                        width: `${800 * currentScale}px`,
+                        height: `${1131 * currentScale}px`,
+                      }}
+                      className="relative transition-all duration-150 shrink-0"
+                    >
+                      <div
+                        id="printable-resume"
+                        style={{
+                          width: "800px",
+                          minHeight: "1131px",
+                          transform: `scale(${currentScale})`,
+                          transformOrigin: "top left",
+                        }}
+                        className="bg-white text-slate-900 shadow-2xl shadow-slate-400/40 dark:shadow-2xl dark:shadow-black/80 ring-1 ring-slate-900/10 rounded-sm overflow-hidden"
+                      >
+                        <ResumePreview
+                          templateName={selectedTemplate}
+                          resumeData={resumeData}
+                          containerWidth={800}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
 
         </div>
       </div>
     </NavbarLayout>
+    </AuthGuard>
   );
 }

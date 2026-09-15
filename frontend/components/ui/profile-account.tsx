@@ -1,108 +1,114 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
+import React, { useContext, useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { CheckCheck, LogOut, Moon, Sun } from "lucide-react";
-
-import { useTheme } from "next-themes";
-import { useContext, useEffect, useState } from "react";
+import { LogOut, LayoutDashboard, Sparkles, ShieldCheck } from "lucide-react";
 import { UserContext } from "@/contexts/useContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function ProfileAccount() {
-  const { setTheme } = useTheme();
   const { user, clearUser } = useContext(UserContext);
-  const [avartaFallback, setAvartaFallback] = useState("");
-
+  const [avatarFallback, setAvatarFallback] = useState("U");
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user?.name containing a space, if so, set the first letter of the first name and last name as the fallback
     if (user?.name) {
-      const nameParts = user.name.split(" ");
-      if (nameParts.length > 1) {
-        setAvartaFallback(`${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase());
+      const nameParts = user.name.trim().split(" ");
+      if (nameParts.length > 1 && nameParts[0] && nameParts[1]) {
+        setAvatarFallback(`${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase());
+      } else if (nameParts[0]) {
+        setAvatarFallback(nameParts[0][0].toUpperCase());
       } else {
-        setAvartaFallback(user.name[0].toUpperCase());
+        setAvatarFallback("U");
       }
+    } else if (user?.email) {
+      setAvatarFallback(user.email[0].toUpperCase());
     } else {
-      setAvartaFallback("N/A");
+      setAvatarFallback("U");
     }
-  }, [avartaFallback, user]);
+  }, [user?.name, user?.email]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     clearUser();
-    router.push("/");
-  }
+    router.push("/sign-in");
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer size-9">
-          <AvatarImage className="object-cover" src={user?.profileImageUrl || ""} alt="@shadcn" />
-          <AvatarFallback>{avartaFallback}</AvatarFallback>
-        </Avatar>
+        <button
+          className="relative rounded-full focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-transform active:scale-95"
+          aria-label="User Account Menu"
+        >
+          <Avatar className="cursor-pointer size-9 border border-cyan-500/30 shadow-sm hover:border-cyan-500/60 transition-colors">
+            <AvatarImage
+              className="object-cover"
+              src={user?.profileImageUrl || ""}
+              alt={user?.name || "User Avatar"}
+              referrerPolicy="no-referrer"
+            />
+            <AvatarFallback className="bg-cyan-500/15 text-cyan-600 dark:text-cyan-300 font-bold text-xs">
+              {avatarFallback}
+            </AvatarFallback>
+          </Avatar>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="border-none outline-none right-0 top-0 w-[220px] bg-white dark:bg-gray-800 shadow-lg rounded-md"
-        sideOffset={5}
-        collisionPadding={5}
+        className="w-60 p-2 rounded-2xl border border-border/80 bg-card/95 backdrop-blur-xl shadow-xl shadow-slate-900/10 dark:shadow-cyan-950/30"
+        sideOffset={8}
       >
-        <DropdownMenuLabel>
-          <div className="flex flex-col items-start">
-            <span>{user?.name}</span>
-            <span className="text-[12px] font-light">{user?.email}</span>
+        <DropdownMenuLabel className="p-2 space-y-1">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-bold text-foreground truncate max-w-[170px]">
+              {user?.name || "User Account"}
+            </p>
+            {user?.provider === "google" && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+                <ShieldCheck className="w-3 h-3" />
+                Google
+              </span>
+            )}
           </div>
+          <p className="text-xs text-muted-foreground font-normal truncate">
+            {user?.email || "No email available"}
+          </p>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>
-          <div className="flex flex-col items-start">
-            <span className="mb-2">Theme</span>
-            <Button
-              variant={"secondary"}
-              className="w-full flex justify-between items-center p-0 bg-transparent shadow-none hover:bg-transparent"
-              onClick={() => setTheme("light")}
-            >
-              <div className="flex items-center space-x-2">
-                <Sun className="h-4 w-4" />
-                <span>Light</span>
-              </div>
-              <CheckCheck className="h-4 w-4 dark:hidden" />
-            </Button>
-            <Button
-              variant={"secondary"}
-              className="w-full flex justify-between items-center p-0 bg-transparent shadow-none hover:bg-transparent"
-              onClick={() => setTheme("dark")}
-            >
-              <div className="flex items-center space-x-2">
-                <Moon className="h-4 w-4" />
-                <span>Dark</span>
-              </div>
-              <CheckCheck className="h-4 w-4 dark:block hidden" />
-            </Button>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+
+        <DropdownMenuSeparator className="my-1" />
+
+        <DropdownMenuItem asChild className="cursor-pointer text-xs py-2 rounded-xl">
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <LayoutDashboard className="w-4 h-4 text-cyan-500" />
+            <span>My Resumes</span>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild className="cursor-pointer text-xs py-2 rounded-xl">
+          <Link href="/resume-templates" className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-purple-500" />
+            <span>Create New Resume</span>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator className="my-1" />
+
         <DropdownMenuItem
-          className="cursor-pointer text-red-500 dark:text-red-400"
+          className="cursor-pointer text-xs py-2 text-red-500 dark:text-red-400 hover:text-red-600 hover:bg-red-500/10 rounded-xl flex items-center gap-2"
           onClick={handleLogout}
         >
-          <LogOut />
-          Log out
+          <LogOut className="w-4 h-4" />
+          <span>Sign Out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

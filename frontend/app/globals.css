@@ -1,3 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/google-sans');
+
+@font-face {
+  font-family: 'Google Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/googlesans/v70/4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrwEIKli.ttf') format('truetype'),
+       local('Google Sans Regular'),
+       local('Google Sans');
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/googlesans/v70/4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrw2IKli.ttf') format('truetype'),
+       local('Google Sans Medium');
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/googlesans/v70/4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrzjJ6li.ttf') format('truetype'),
+       local('Google Sans Bold');
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,7 +51,7 @@ input[type="number"] {
 
 @layer base {
   :root {
-    --background: 220 20% 98%;
+    --background: 220 25% 97%;
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
@@ -28,16 +59,16 @@ input[type="number"] {
     --popover-foreground: 222 47% 11%;
     --primary: 199 89% 48%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 28% 95%;
+    --secondary: 215 25% 94%;
     --secondary-foreground: 222 47% 11%;
-    --muted: 215 28% 95%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 215 25% 94%;
+    --muted-foreground: 215 16% 40%;
     --accent: 265 89% 66%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 216 28% 88%;
+    --input: 216 28% 88%;
     --ring: 199 89% 48%;
     --radius: 0.75rem;
 
@@ -45,13 +76,13 @@ input[type="number"] {
     --brand-purple: #8B5CF6;
     --brand-pink: #D946EF;
 
-    --sidebar-background: 220 20% 98%;
+    --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 47% 15%;
     --sidebar-primary: 199 89% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 28% 93%;
+    --sidebar-accent: 215 25% 94%;
     --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 90%;
+    --sidebar-border: 216 28% 88%;
     --sidebar-ring: 199 89% 48%;
   }
 
@@ -95,8 +126,12 @@ input[type="number"] {
   * {
     @apply border-border;
   }
-  body {
+  html, body {
     @apply bg-background text-foreground;
+    font-family: 'Google Sans', 'Product Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  input, button, select, textarea {
+    font-family: inherit;
   }
 }
 
@@ -122,30 +157,49 @@ input[type="number"] {
 }
 
 .glass-card {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(148, 163, 184, 0.15);
 }
 
-.light .glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 25px -2px rgba(0, 0, 0, 0.4);
 }
 
 .glass-panel {
-  background: rgba(11, 19, 43, 0.7);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 210, 255, 0.15);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  box-shadow: 0 8px 30px -4px rgba(0, 210, 255, 0.1);
 }
 
-/* Glowing Ambience */
+.dark .glass-panel {
+  background: rgba(11, 19, 43, 0.75);
+  border: 1px solid rgba(0, 210, 255, 0.15);
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.5);
+}
+
+/* Adaptive Glowing Ambience */
 .cyan-glow {
+  background: radial-gradient(circle at center, rgba(0, 210, 255, 0.15) 0%, rgba(0, 210, 255, 0) 70%);
+  filter: blur(70px);
+}
+
+.dark .cyan-glow {
   background: radial-gradient(circle at center, rgba(0, 210, 255, 0.25) 0%, rgba(0, 210, 255, 0) 70%);
   filter: blur(60px);
 }
 
 .purple-glow {
+  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.12) 0%, rgba(139, 92, 246, 0) 70%);
+  filter: blur(80px);
+}
+
+.dark .purple-glow {
   background: radial-gradient(circle at center, rgba(139, 92, 246, 0.22) 0%, rgba(139, 92, 246, 0) 70%);
   filter: blur(70px);
 }
@@ -222,5 +276,39 @@ input[type="number"] {
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Print Stylesheet for High-Quality PDF & Paper Export */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #printable-resume,
+  #printable-resume * {
+    visibility: visible;
+  }
+  #printable-resume {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
 }
 

@@ -7,7 +7,18 @@ import { templateList } from "@/constants";
 import { ArrowRight, Sparkles, LayoutTemplate } from "lucide-react";
 import { TemplateThumbnail } from "./templates/template-thumbnail";
 
+const FEATURED_TEMPLATE_IDS = [
+  "black_white_minimalist",
+  "modern_clean",
+  "tech_dark_terminal",
+  "executive_corporate",
+];
+
 const TemplateShowcase = () => {
+  const featuredTemplates = templateList.filter((tpl) =>
+    FEATURED_TEMPLATE_IDS.includes(tpl.id)
+  );
+
   return (
     <section id="templates" className="w-full py-16 md:py-24 relative">
       {/* Background glow */}
@@ -15,25 +26,25 @@ const TemplateShowcase = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+        <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-sky-500/30 bg-sky-500/10 text-xs font-semibold text-sky-400">
             <LayoutTemplate className="w-3.5 h-3.5" />
-            Tested ATS Layouts
+            Featured CV Drafts
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Designed for Every <span className="brand-gradient-text">Industry & Career Stage</span>
+            Ready-to-Use <span className="brand-gradient-text">CV Drafts</span>
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base">
-            Whether you&apos;re a seasoned executive or recent college graduate, our templates are optimized to showcase your strengths.
+            Select a pre-formatted draft to jumpstart your resume, or explore our full collection of 18+ ATS-compliant formats.
           </p>
         </div>
 
-        {/* Templates Grid with Scaled Previews */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {templateList.map((tpl) => (
+        {/* Templates Grid with Scaled Previews (4 Curated Drafts) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredTemplates.map((tpl) => (
             <div
               key={tpl.id}
-              className="group relative rounded-2xl border border-border/80 bg-card/80 backdrop-blur-md overflow-hidden flex flex-col transition-all duration-300 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-950/30 hover:-translate-y-2"
+              className="group relative rounded-2xl border border-slate-200/80 dark:border-border/80 bg-card/90 backdrop-blur-md overflow-hidden flex flex-col transition-all duration-300 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-950/20 hover:-translate-y-2"
             >
               {/* Scaled Preview */}
               <div className="relative group/preview overflow-hidden bg-white">
@@ -55,7 +66,7 @@ const TemplateShowcase = () => {
                   >
                     <Link href="/resume-templates">
                       <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                      Explore Template
+                      Use This Template
                     </Link>
                   </Button>
                 </div>
@@ -84,7 +95,7 @@ const TemplateShowcase = () => {
                   className="w-full rounded-xl text-xs font-semibold border-border/80 hover:bg-cyan-500/10 hover:border-cyan-500/30 hover:text-cyan-400 transition-all"
                 >
                   <Link href="/resume-templates" className="flex items-center justify-center gap-1.5">
-                    <span>Use Template</span>
+                    <span>Preview & Customize</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </Button>
@@ -93,16 +104,24 @@ const TemplateShowcase = () => {
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-14 text-center">
+        {/* Bottom CTA Banner to view all 18+ templates */}
+        <div className="mt-14 p-6 sm:p-8 rounded-2xl border border-cyan-500/20 bg-gradient-to-r from-cyan-500/5 via-purple-500/5 to-indigo-500/5 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+          <div className="space-y-1">
+            <h4 className="text-lg font-bold text-foreground">
+              Looking for more specialized resume formats?
+            </h4>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Explore our full gallery with 18+ industry-specific designs including Infographic, Compact, and Academic formats.
+            </p>
+          </div>
           <Button
             asChild
             size="lg"
-            className="brand-gradient-btn rounded-full px-8 py-6 text-sm font-semibold shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all"
+            className="brand-gradient-btn rounded-full px-8 py-5 text-sm font-semibold shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all shrink-0"
           >
             <Link href="/resume-templates" className="flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
-              <span>Explore All ATS Templates</span>
+              <span>Browse All 18+ Templates</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>

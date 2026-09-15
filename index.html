@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* Fixed Preview Container & Element Constraints */
+    #qrcode {
+      width: 100%;
+      height: 100%;
+      max-width: 250px;
+      max-height: 250px;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    #qrcode img, #qrcode canvas {
+      max-width: 100% !important;
+      max-height: 100% !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      margin: 0 auto;
+      border-radius: 0.75rem;
+      display: block;
+    }
+
+    /* Seamless Borderless Color Inputs */
+    input[type="color"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      border: none;
+      outline: none;
+      padding: 0;
+      cursor: pointer;
+      background: transparent;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+      border-radius: 0.75rem;
+    }
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 0.75rem;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+    input[type="color"]::-moz-color-swatch {
+      border: none;
+      border-radius: 0.75rem;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 tracking-tight leading-none">QR Code Studio</h1>
+          <p class="text-xs text-slate-500 mt-0.5">Instant, customizable code generation</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+          Ready
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left Column: Input and Controls -->
+      <section class="lg:col-span-7 space-y-6">
+        
+        <!-- Format Selection Tabs -->
+        <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-1">Select Input Format</label>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5" id="tab-container">
+            <button type="button" data-type="url" class="tab-btn active-tab flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-xs font-medium transition-all bg-indigo-50 text-indigo-700 border-indigo-200 shadow-sm">
+              <svg class="w-5 h-5 mb-1 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+              URL
+            </button>
+            <button type="button" data-type="text" class="tab-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all">
+              <svg class="w-5 h-5 mb-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              Text
+            </button>
+            <button type="button" data-type="wifi" class="tab-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all">
+              <svg class="w-5 h-5 mb-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path></svg>
+              Wi-Fi
+            </button>
+            <button type="button" data-type="vcard" class="tab-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all">
+              <svg class="w-5 h-5 mb-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+              Contact
+            </button>
+            <button type="button" data-type="email" class="tab-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all">
+              <svg class="w-5 h-5 mb-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+              Email
+            </button>
+            <button type="button" data-type="sms" class="tab-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-transparent text-xs font-medium text-slate-600 hover:bg-slate-100 transition-all">
+              <svg class="w-5 h-5 mb-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+              SMS
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          
+          <!-- URL Form -->
+          <div id="form-url" class="format-form space-y-2">
+            <label for="input-url" class="block text-sm font-semibold text-slate-700">Website or Page URL</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+              </div>
+              <input type="url" id="input-url" class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition-all" placeholder="https://example.com" value="https://google.com">
+            </div>
+          </div>
+
+          <!-- Plain Text Form -->
+          <div id="form-text" class="format-form hidden space-y-2">
+            <label for="input-text" class="block text-sm font-semibold text-slate-700">Plain Text / Message</label>
+            <textarea id="input-text" rows="4" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition-all" placeholder="Enter any notes, instructions, or raw text..."></textarea>
+          </div>
+
+          <!-- Wi-Fi Form -->
+          <div id="form-wifi" class="format-form hidden space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="wifi-ssid" class="block text-sm font-semibold text-slate-700 mb-1">Network Name (SSID)</label>
+                <input type="text" id="wifi-ssid" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm" placeholder="MyHomeWiFi">
+              </div>
+              <div>
+                <label for="wifi-type" class="block text-sm font-semibold text-slate-700 mb-1">Security Type</label>
+                <select id="wifi-type" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm bg-white">
+                  <option value="WPA">WPA/WPA2/WPA3</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">None (Open Network)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="wifi-pass" class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
+              <input type="text" id="wifi-pass" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm" placeholder="Wi-Fi Password">
+            </div>
+            <label class="inline-flex items-center text-xs text-slate-600 cursor-pointer">
+              <input type="checkbox" id="wifi-hidden" class="rounded text-indigo-600 focus:ring-indigo-500 h-4 w-4 mr-2">
+              Hidden Network
+            </label>
+          </div>
+
+          <!-- vCard / Contact Form -->
+          <div id="form-vcard" class="format-form hidden space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="vcard-fname" class="block text-xs font-semibold text-slate-700 mb-1">First Name</label>
+                <input type="text" id="vcard-fname" class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="Alex">
+              </div>
+              <div>
+                <label for="vcard-lname" class="block text-xs font-semibold text-slate-700 mb-1">Last Name</label>
+                <input type="text" id="vcard-lname" class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="Morgan">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="vcard-phone" class="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+                <input type="tel" id="vcard-phone" class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="+1 (555) 000-0000">
+              </div>
+              <div>
+                <label for="vcard-email" class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                <input type="email" id="vcard-email" class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="alex@company.com">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="vcard-org" class="block text-xs font-semibold text-slate-700 mb-1">Organization / Company</label>
+                <input type="text" id="vcard-org" class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="Acme Inc.">
+              </div>
+              <div>
+                <label for="vcard-title" class="block text-xs font-semibold text-slate-700 mb-1">Job Title</label>
+                <input type="text" id="vcard-title" class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="Product Designer">
+              </div>
+            </div>
+          </div>
+
+          <!-- Email Form -->
+          <div id="form-email" class="format-form hidden space-y-3">
+            <div>
+              <label for="email-to" class="block text-xs font-semibold text-slate-700 mb-1">Recipient Email</label>
+              <input type="email" id="email-to" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="recipient@example.com">
+            </div>
+            <div>
+              <label for="email-sub" class="block text-xs font-semibold text-slate-700 mb-1">Subject</label>
+              <input type="text" id="email-sub" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="Hello from QR Code">
+            </div>
+            <div>
+              <label for="email-body" class="block text-xs font-semibold text-slate-700 mb-1">Body Text</label>
+              <textarea id="email-body" rows="3" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="Write your message here..."></textarea>
+            </div>
+          </div>
+
+          <!-- SMS Form -->
+          <div id="form-sms" class="format-form hidden space-y-3">
+            <div>
+              <label for="sms-phone" class="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+              <input type="tel" id="sms-phone" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="+1234567890">
+            </div>
+            <div>
+              <label for="sms-msg" class="block text-xs font-semibold text-slate-700 mb-1">Pre-filled Message</label>
+              <textarea id="sms-msg" rows="3" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm" placeholder="I am interested in your services..."></textarea>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h2 class="text-sm font-bold text-slate-800 flex items-center">
+              <svg class="w-4 h-4 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+              Appearance &amp; Export
+            </h2>
+            <button type="button" id="btn-reset-style" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Reset</button>
+          </div>
+
+          <div class="space-y-5 mt-4">
+            <!-- Curated Palette Quick Presets -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2.5">Preset Palettes</label>
+              <div class="flex flex-wrap gap-2" id="preset-container">
+                <button type="button" data-fg="#0f172a" data-bg="#ffffff" class="preset-pill px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 flex items-center space-x-1.5 transition-all">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-300"></span>
+                  <span>Classic Slate</span>
+                </button>
+                <button type="button" data-fg="#4338ca" data-bg="#f5f3ff" class="preset-pill px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 flex items-center space-x-1.5 transition-all">
+                  <span class="w-2.5 h-2.5 rounded-full bg-indigo-700"></span>
+                  <span>Indigo Dream</span>
+                </button>
+                <button type="button" data-fg="#065f46" data-bg="#ecfdf5" class="preset-pill px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 flex items-center space-x-1.5 transition-all">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-800"></span>
+                  <span>Emerald</span>
+                </button>
+                <button type="button" data-fg="#9d174d" data-bg="#fdf2f8" class="preset-pill px-3 py-1.5 rounded-full text-xs font-medium border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 flex items-center space-x-1.5 transition-all">
+                  <span class="w-2.5 h-2.5 rounded-full bg-pink-800"></span>
+                  <span>Rose Berry</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Custom Modern Color Controls -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Foreground Color Card -->
+              <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 transition-colors">
+                <div>
+                  <label for="cfg-fg" class="block text-xs font-semibold text-slate-700 cursor-pointer">Code Color</label>
+                  <span id="fg-val" class="text-xs font-mono text-slate-400 uppercase">#0F172A</span>
+                </div>
+                <div class="relative w-11 h-11 rounded-xl shadow-sm border border-slate-200/80 p-0.5 bg-white flex items-center justify-center overflow-hidden">
+                  <input type="color" id="cfg-fg" value="#0f172a" class="w-full h-full rounded-lg cursor-pointer">
+                </div>
+              </div>
+
+              <!-- Background Color Card -->
+              <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50/80 border border-slate-200/80 hover:border-slate-300 transition-colors">
+                <div>
+                  <label for="cfg-bg" class="block text-xs font-semibold text-slate-700 cursor-pointer">Background</label>
+                  <span id="bg-val" class="text-xs font-mono text-slate-400 uppercase">#FFFFFF</span>
+                </div>
+                <div class="relative w-11 h-11 rounded-xl shadow-sm border border-slate-200/80 p-0.5 bg-white flex items-center justify-center overflow-hidden">
+                  <input type="color" id="cfg-bg" value="#ffffff" class="w-full h-full rounded-lg cursor-pointer">
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Size Selector -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2.5">Export Resolution</label>
+              <div class="grid grid-cols-3 gap-2" id="size-selector">
+                <button type="button" data-size="200" class="size-btn py-2 px-3 text-xs font-medium rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition-all text-center">
+                  Compact <span class="block text-[10px] text-slate-400 font-mono">200px</span>
+                </button>
+                <button type="button" data-size="300" class="size-btn active-size py-2 px-3 text-xs font-medium rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 shadow-sm transition-all text-center">
+                  Standard <span class="block text-[10px] text-indigo-500 font-mono">300px</span>
+                </button>
+                <button type="button" data-size="500" class="size-btn py-2 px-3 text-xs font-medium rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition-all text-center">
+                  High-Res <span class="block text-[10px] text-slate-400 font-mono">500px</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <section class="lg:col-span-5 sticky top-24">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
+          
+          <div class="w-full flex justify-between items-center mb-6">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Live Preview</span>
+            <span id="content-type-badge" class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+              URL
+            </span>
+          </div>
+
+          <!-- QR Canvas / Container Box -->
+          <div id="qr-wrapper" class="p-4 sm:p-6 bg-slate-100/70 border border-slate-200/80 rounded-2xl flex items-center justify-center min-h-[280px] w-full max-w-[320px] aspect-square relative shadow-inner overflow-hidden">
+            <!-- Render Target -->
+            <div id="qrcode" class="w-full h-full flex items-center justify-center"></div>
+          </div>
+
+          <!-- Payload Peek / Info -->
+          <div class="mt-4 w-full px-2">
+            <p id="payload-preview" class="text-xs text-slate-500 truncate max-w-full font-mono bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200/60" title="Payload">
+              https://google.com
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="w-full grid grid-cols-2 gap-3 mt-6">
+            <button type="button" id="btn-download" class="flex items-center justify-center space-x-2 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium text-sm transition-colors shadow-sm shadow-indigo-100 active:scale-[0.98]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>Download PNG</span>
+            </button>
+
+            <button type="button" id="btn-copy" class="flex items-center justify-center space-x-2 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-sm transition-colors active:scale-[0.98]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+              <span>Copy Data</span>
+            </button>
+          </div>
+
+          <div class="mt-4 flex items-center justify-center text-[11px] text-slate-400 space-x-2">
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span>Scan with any smartphone camera or lens</span>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 text-white text-sm px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2.5">
+    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <span id="toast-message">Action completed</span>
+  </div>
+
+  <script>
+    /* Application state */
+    let currentFormat = 'url';
+    let currentSize = 300;
+    let qrInstance = null;
+
+    /* DOM references */
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const formatForms = document.querySelectorAll('.format-form');
+    const qrContainer = document.getElementById('qrcode');
+    const badgeType = document.getElementById('content-type-badge');
+    const payloadPreview = document.getElementById('payload-preview');
+    
+    // Style controls
+    const inputFg = document.getElementById('cfg-fg');
+    const inputBg = document.getElementById('cfg-bg');
+    const fgVal = document.getElementById('fg-val');
+    const bgVal = document.getElementById('bg-val');
+    const sizeButtons = document.querySelectorAll('.size-btn');
+    const presetButtons = document.querySelectorAll('.preset-pill');
+    const btnReset = document.getElementById('btn-reset-style');
+    const btnDownload = document.getElementById('btn-download');
+    const btnCopy = document.getElementById('btn-copy');
+
+    function getPayload() {
+      switch (currentFormat) {
+        case 'url': {
+          const raw = document.getElementById('input-url').value.trim();
+          if (!raw) return '';
+          return raw.startsWith('http://') || raw.startsWith('https://') ? raw : 'https://' + raw;
+        }
+        case 'text': {
+          return document.getElementById('input-text').value.trim();
+        }
+        case 'wifi': {
+          const ssid = document.getElementById('wifi-ssid').value.trim();
+          if (!ssid) return '';
+          const type = document.getElementById('wifi-type').value;
+          const pass = document.getElementById('wifi-pass').value;
+          const hidden = document.getElementById('wifi-hidden').checked ? 'true' : 'false';
+          return `WIFI:S:${ssid};T:${type};P:${pass};H:${hidden};;`;
+        }
+        case 'vcard': {
+          const fn = document.getElementById('vcard-fname').value.trim();
+          const ln = document.getElementById('vcard-lname').value.trim();
+          const phone = document.getElementById('vcard-phone').value.trim();
+          const email = document.getElementById('vcard-email').value.trim();
+          const org = document.getElementById('vcard-org').value.trim();
+          const title = document.getElementById('vcard-title').value.trim();
+
+          const fullName = `${fn} ${ln}`.trim();
+          if (!fullName && !phone && !email) return '';
+
+          return [
+            'BEGIN:VCARD',
+            'VERSION:3.0',
+            `FN:${fullName || 'Contact'}`,
+            `N:${ln};${fn};;;`,
+            org ? `ORG:${org}` : '',
+            title ? `TITLE:${title}` : '',
+            phone ? `TEL;TYPE=CELL:${phone}` : '',
+            email ? `EMAIL:${email}` : '',
+            'END:VCARD'
+          ].filter(Boolean).join('\n');
+        }
+        case 'email': {
+          const to = document.getElementById('email-to').value.trim();
+          const sub = document.getElementById('email-sub').value.trim();
+          const body = document.getElementById('email-body').value.trim();
+          if (!to && !sub && !body) return '';
+          let mailto = `mailto:${to}`;
+          const params = [];
+          if (sub) params.push(`subject=${encodeURIComponent(sub)}`);
+          if (body) params.push(`body=${encodeURIComponent(body)}`);
+          if (params.length) mailto += `?${params.join('&')}`;
+          return mailto;
+        }
+        case 'sms': {
+          const phone = document.getElementById('sms-phone').value.trim();
+          const msg = document.getElementById('sms-msg').value.trim();
+          if (!phone && !msg) return '';
+          return `smsto:${phone}:${msg}`;
+        }
+        default:
+          return '';
+      }
+    }
+
+    function renderEmptyState() {
+      qrContainer.innerHTML = `
+        <div class="flex flex-col items-center justify-center text-center p-3">
+          <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 mb-2 border border-slate-200/60 border-dashed">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+            </svg>
+          </div>
+          <span class="text-xs font-semibold text-slate-600">No content entered</span>
+          <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">Type or paste data to generate your QR code</p>
+        </div>
+      `;
+      payloadPreview.textContent = 'Waiting for input...';
+      payloadPreview.classList.add('italic', 'text-slate-400');
+      payloadPreview.classList.remove('text-slate-600');
+      payloadPreview.title = '';
+      btnDownload.disabled = true;
+      btnCopy.disabled = true;
+    }
+
+    function generateQR() {
+      const payload = getPayload();
+      
+      if (!payload) {
+        renderEmptyState();
+        return;
+      }
+
+      btnDownload.disabled = false;
+      btnCopy.disabled = false;
+      payloadPreview.classList.remove('italic', 'text-slate-400');
+      payloadPreview.classList.add('text-slate-600');
+
+      const colorDark = inputFg.value || '#0f172a';
+      const colorLight = inputBg.value || '#ffffff';
+
+      // Clear existing canvas/image
+      qrContainer.innerHTML = '';
+
+      try {
+        qrInstance = new QRCode(qrContainer, {
+          text: payload,
+          width: currentSize,
+          height: currentSize,
+          colorDark: colorDark,
+          colorLight: colorLight,
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Ensure canvas and image immediately adhere to preview bounds
+        const canvas = qrContainer.querySelector('canvas');
+        const img = qrContainer.querySelector('img');
+        if (canvas) {
+          canvas.style.maxWidth = '100%';
+          canvas.style.maxHeight = '100%';
+        }
+        if (img) {
+          img.style.maxWidth = '100%';
+          img.style.maxHeight = '100%';
+        }
+
+        // Update preview text
+        payloadPreview.textContent = payload;
+        payloadPreview.title = payload;
+      } catch (err) {
+        console.error('QR Generation failed:', err);
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-message');
+      toastText.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = btn.getAttribute('data-type');
+        currentFormat = type;
+
+        tabButtons.forEach(b => {
+          b.classList.remove('bg-indigo-50', 'text-indigo-700', 'border-indigo-200', 'shadow-sm');
+          b.classList.add('text-slate-600', 'border-transparent');
+          const icon = b.querySelector('svg');
+          if (icon) icon.classList.replace('text-indigo-600', 'text-slate-500');
+        });
+
+        btn.classList.remove('text-slate-600', 'border-transparent');
+        btn.classList.add('bg-indigo-50', 'text-indigo-700', 'border-indigo-200', 'shadow-sm');
+        const activeIcon = btn.querySelector('svg');
+        if (activeIcon) activeIcon.classList.replace('text-slate-500', 'text-indigo-600');
+
+        formatForms.forEach(form => form.classList.add('hidden'));
+        const targetForm = document.getElementById(`form-${type}`);
+        if (targetForm) targetForm.classList.remove('hidden');
+
+        badgeType.textContent = type.toUpperCase();
+        generateQR();
+      });
+    });
+
+    const allInputs = document.querySelectorAll('.format-form input, .format-form textarea, .format-form select');
+    allInputs.forEach(input => {
+      input.addEventListener('input', generateQR);
+      input.addEventListener('change', generateQR);
+    });
+
+    // Color inputs with hex label updates
+    inputFg.addEventListener('input', (e) => {
+      fgVal.textContent = e.target.value.toUpperCase();
+      generateQR();
+    });
+
+    inputBg.addEventListener('input', (e) => {
+      bgVal.textContent = e.target.value.toUpperCase();
+      generateQR();
+    });
+
+    const wifiTypeTrigger = document.getElementById('wifi-type-trigger');
+    const wifiTypeMenu = document.getElementById('wifi-type-menu');
+    const wifiTypeInput = document.getElementById('wifi-type');
+    const wifiTypeItems = document.querySelectorAll('.combobox-item');
+    const wifiChevron = document.getElementById('combobox-chevron');
+    const selectedText = document.getElementById('combobox-selected-text');
+    const selectedBadge = document.getElementById('combobox-badge');
+    const wifiPassInput = document.getElementById('wifi-pass');
+    const wifiPassHint = document.getElementById('wifi-pass-hint');
+
+    function toggleCombobox(open) {
+      const shouldOpen = open !== undefined ? open : wifiTypeMenu.classList.contains('hidden');
+      if (shouldOpen) {
+        wifiTypeMenu.classList.remove('hidden');
+        wifiChevron.classList.add('rotate-180');
+        wifiTypeTrigger.setAttribute('aria-expanded', 'true');
+      } else {
+        wifiTypeMenu.classList.add('hidden');
+        wifiChevron.classList.remove('rotate-180');
+        wifiTypeTrigger.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    if (wifiTypeTrigger && wifiTypeMenu) {
+      wifiTypeTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleCombobox();
+      });
+
+      wifiTypeItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const val = item.getAttribute('data-value');
+          const title = item.querySelector('.text-xs').textContent.trim();
+          const badgeText = item.getAttribute('data-badge') || '';
+
+          // Update hidden form field
+          wifiTypeInput.value = val;
+
+          // Update trigger display
+          selectedText.textContent = title;
+          if (badgeText) {
+            selectedBadge.textContent = badgeText;
+            selectedBadge.classList.remove('hidden');
+            if (val === 'nopass') {
+              selectedBadge.className = 'hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold bg-amber-50 text-amber-700 rounded-md';
+            } else if (val === 'WEP') {
+              selectedBadge.className = 'hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold bg-slate-100 text-slate-600 rounded-md';
+            } else {
+              selectedBadge.className = 'hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold bg-indigo-50 text-indigo-700 rounded-md';
+            }
+          } else {
+            selectedBadge.classList.add('hidden');
+          }
+
+          // Update list item selected styles
+          wifiTypeItems.forEach(i => {
+            const checkIcon = i.querySelector('.combobox-check');
+            if (i === item) {
+              i.setAttribute('aria-selected', 'true');
+              i.classList.add('bg-indigo-50/70');
+              i.classList.remove('hover:bg-slate-50');
+              if (checkIcon) checkIcon.classList.remove('hidden');
+            } else {
+              i.setAttribute('aria-selected', 'false');
+              i.classList.remove('bg-indigo-50/70');
+              i.classList.add('hover:bg-slate-50');
+              if (checkIcon) checkIcon.classList.add('hidden');
+            }
+          });
+
+          // Toggle password input availability if open network
+          if (val === 'nopass') {
+            wifiPassInput.disabled = true;
+            wifiPassInput.value = '';
+            wifiPassInput.placeholder = 'No password needed for open networks';
+            wifiPassHint.textContent = 'Not required for open network';
+            wifiPassHint.classList.add('text-amber-600');
+          } else {
+            wifiPassInput.disabled = false;
+            wifiPassInput.placeholder = 'Wi-Fi Password';
+            wifiPassHint.textContent = 'Required for protected networks';
+            wifiPassHint.classList.remove('text-amber-600');
+          }
+
+          toggleCombobox(false);
+          generateQR();
+        });
+      });
+
+      // Close menu on outside click or Escape key
+      document.addEventListener('click', (e) => {
+        if (!wifiTypeMenu.contains(e.target) && !wifiTypeTrigger.contains(e.target)) {
+          toggleCombobox(false);
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          toggleCombobox(false);
+        }
+      });
+    }
+
+    // Preset palette buttons
+    presetButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const fg = btn.getAttribute('data-fg');
+        const bg = btn.getAttribute('data-bg');
+        inputFg.value = fg;
+        inputBg.value = bg;
+        fgVal.textContent = fg.toUpperCase();
+        bgVal.textContent = bg.toUpperCase();
+        generateQR();
+      });
+    });
+
+    // Resolution button selection
+    sizeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sizeButtons.forEach(b => {
+          b.classList.remove('border-indigo-200', 'bg-indigo-50', 'text-indigo-700', 'shadow-sm');
+          b.classList.add('border-slate-200', 'bg-slate-50', 'text-slate-600');
+          const sub = b.querySelector('span');
+          if (sub) sub.classList.replace('text-indigo-500', 'text-slate-400');
+        });
+
+        btn.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-600');
+        btn.classList.add('border-indigo-200', 'bg-indigo-50', 'text-indigo-700', 'shadow-sm');
+        const sub = btn.querySelector('span');
+        if (sub) sub.classList.replace('text-slate-400', 'text-indigo-500');
+
+        currentSize = parseInt(btn.getAttribute('data-size'), 10) || 300;
+        generateQR();
+      });
+    });
+
+    btnReset.addEventListener('click', () => {
+      inputFg.value = '#0f172a';
+      inputBg.value = '#ffffff';
+      fgVal.textContent = '#0F172A';
+      bgVal.textContent = '#FFFFFF';
+      
+      // Reset size to 300
+      currentSize = 300;
+      sizeButtons.forEach(b => {
+        if (b.getAttribute('data-size') === '300') {
+          b.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-600');
+          b.classList.add('border-indigo-200', 'bg-indigo-50', 'text-indigo-700', 'shadow-sm');
+          const sub = b.querySelector('span');
+          if (sub) sub.classList.replace('text-slate-400', 'text-indigo-500');
+        } else {
+          b.classList.remove('border-indigo-200', 'bg-indigo-50', 'text-indigo-700', 'shadow-sm');
+          b.classList.add('border-slate-200', 'bg-slate-50', 'text-slate-600');
+          const sub = b.querySelector('span');
+          if (sub) sub.classList.replace('text-indigo-500', 'text-slate-400');
+        }
+      });
+
+      generateQR();
+      showToast('Appearance reset to defaults');
+    });
+
+    // Download PNG
+    btnDownload.addEventListener('click', () => {
+      const payload = getPayload();
+      if (!payload) {
+        showToast('Please enter content first');
+        return;
+      }
+
+      const canvas = qrContainer.querySelector('canvas');
+      const img = qrContainer.querySelector('img');
+
+      let downloadUri = null;
+      if (canvas) {
+        downloadUri = canvas.toDataURL('image/png');
+      } else if (img && img.src) {
+        downloadUri = img.src;
+      }
+
+      if (!downloadUri) {
+        showToast('Please wait, QR still rendering...');
+        return;
+      }
+
+      const link = document.createElement('a');
+      link.download = `qrcode_${currentFormat}_${Date.now()}.png`;
+      link.href = downloadUri;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('QR code downloaded successfully!');
+    });
+
+    // Copy to clipboard
+    btnCopy.addEventListener('click', () => {
+      const payload = getPayload();
+      if (!payload) {
+        showToast('No data to copy yet');
+        return;
+      }
+
+      const tempInput = document.createElement('textarea');
+      tempInput.value = payload;
+      tempInput.style.position = 'fixed';
+      tempInput.style.left = '-9999px';
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('Payload copied to clipboard!');
+      } catch (err) {
+        showToast('Failed to copy payload');
+      }
+      document.body.removeChild(tempInput);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      generateQR();
+    });
+  </script>
+</body>
+</html>

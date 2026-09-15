@@ -142,8 +142,8 @@ export const AiDescriptionAssistant: React.FC<AiDescriptionAssistantProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl bg-card border-border/80 shadow-2xl p-6">
-        <DialogHeader>
+      <DialogContent className="max-w-xl bg-card border-border/80 shadow-2xl p-0 overflow-hidden flex flex-col max-h-[85vh] sm:max-h-[88vh]">
+        <DialogHeader className="px-6 py-4 border-b border-border/60 bg-card/90 backdrop-blur shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
               <Sparkles className="w-4 h-4" />
@@ -159,7 +159,7 @@ export const AiDescriptionAssistant: React.FC<AiDescriptionAssistantProps> = ({
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 py-2">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 custom-scrollbar">
           {/* Quick suggestions */}
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
@@ -271,7 +271,7 @@ export const AiDescriptionAssistant: React.FC<AiDescriptionAssistantProps> = ({
           )}
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0">
+        <DialogFooter className="px-6 py-3.5 border-t border-border/60 bg-card/95 backdrop-blur shrink-0 flex items-center justify-between sm:justify-between w-full">
           <Button
             type="button"
             variant="ghost"

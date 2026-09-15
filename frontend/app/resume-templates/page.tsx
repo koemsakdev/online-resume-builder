@@ -26,6 +26,9 @@ import { API_PATHS } from "@/utils/apiPath";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { TemplateThumbnail } from "@/components/templates/template-thumbnail";
+import ResumePreview from "@/components/pages/resume-preview";
+import sampleResume from "@/assets/resume.json";
+import AuthGuard from "@/components/auth/auth-guard";
 
 const CATEGORIES = ["All", "Technical", "Leadership", "Corporate", "Academic"];
 
@@ -91,24 +94,25 @@ export default function ResumeTemplatesPage() {
   };
 
   return (
-    <NavbarLayout>
-      <div className="relative min-h-[calc(100vh-4rem)] w-full bg-[#0B1120] text-slate-100 p-4 sm:p-6 lg:p-8 space-y-8">
+    <AuthGuard>
+      <NavbarLayout>
+        <div className="relative min-h-[calc(100vh-4rem)] w-full bg-gradient-to-b from-slate-50/80 via-background to-slate-100/50 dark:from-[#0B1120] dark:via-background dark:to-[#080d19] text-foreground p-4 sm:p-6 lg:p-8 space-y-8">
         
         {/* Background Ambient Glow */}
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] cyan-glow pointer-events-none opacity-15 -z-10" />
-        <div className="absolute bottom-10 left-10 w-[400px] h-[400px] purple-glow pointer-events-none opacity-15 -z-10" />
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] cyan-glow pointer-events-none opacity-10 dark:opacity-20 -z-10" />
+        <div className="absolute bottom-10 left-10 w-[400px] h-[400px] purple-glow pointer-events-none opacity-10 dark:opacity-20 -z-10" />
 
         {/* Header Title Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/50 pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/60 pb-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-xs font-semibold text-cyan-400">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-xs font-semibold text-cyan-600 dark:text-cyan-400">
               <LayoutTemplate className="w-3.5 h-3.5" />
               <span>ATS Resume Studio</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
               Choose an <span className="brand-gradient-text">ATS-Ready Template</span>
             </h1>
-            <p className="text-sm text-slate-300 max-w-xl">
+            <p className="text-sm text-muted-foreground max-w-xl">
               Each layout is designed with clean typography, optimal section hierarchy, and ATS screening compliance. Pick a design to begin customizing.
             </p>
           </div>
@@ -122,8 +126,8 @@ export default function ResumeTemplatesPage() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2 rounded-2xl text-xs font-semibold transition-all whitespace-nowrap ${
                 activeCategory === cat
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20"
-                  : "bg-card/60 text-muted-foreground border border-border/70 hover:text-foreground hover:bg-muted/40"
+                  ? "bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-sm shadow-cyan-500/20"
+                  : "bg-card text-muted-foreground border border-border/80 hover:text-foreground hover:bg-muted/60 shadow-sm"
               }`}
             >
               {cat}
@@ -136,7 +140,7 @@ export default function ResumeTemplatesPage() {
           {filteredTemplates.map((tpl) => (
             <div
               key={tpl.id}
-              className="group relative rounded-3xl border border-border/80 bg-card/80 backdrop-blur-xl overflow-hidden flex flex-col transition-all duration-300 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-950/40 hover:-translate-y-2"
+              className="group relative rounded-3xl border border-border/80 bg-card/90 dark:bg-card/80 backdrop-blur-xl overflow-hidden flex flex-col transition-all duration-300 hover:border-cyan-500/50 shadow-md shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-cyan-950/20 hover:-translate-y-1.5"
             >
               {/* Real Scaled Visual Template Preview */}
               <div className="relative group/preview overflow-hidden bg-white">
@@ -286,14 +290,37 @@ export default function ResumeTemplatesPage() {
             </DialogHeader>
 
             {previewTemplate && (
-              <div className="mt-4 rounded-2xl border border-border/60 overflow-hidden shadow-2xl bg-white p-2">
-                <TemplateThumbnail templateId={previewTemplate} />
+              <div className="mt-4 flex justify-center items-start p-4 bg-slate-900/40 dark:bg-slate-950/60 rounded-2xl border border-border/70 overflow-x-auto">
+                <div
+                  style={{
+                    width: "680px",
+                    height: `${1131 * (680 / 800)}px`,
+                  }}
+                  className="relative shrink-0"
+                >
+                  <div
+                    style={{
+                      width: "800px",
+                      minHeight: "1131px",
+                      transform: `scale(${680 / 800})`,
+                      transformOrigin: "top left",
+                    }}
+                    className="bg-white text-slate-900 shadow-2xl ring-1 ring-slate-900/10 rounded-sm overflow-hidden"
+                  >
+                    <ResumePreview
+                      templateName={previewTemplate}
+                      resumeData={sampleResume as any}
+                      containerWidth={800}
+                    />
+                  </div>
+                </div>
               </div>
             )}
           </DialogContent>
         </Dialog>
       </div>
     </NavbarLayout>
+    </AuthGuard>
   );
 }
 

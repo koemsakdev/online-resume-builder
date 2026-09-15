@@ -5,8 +5,9 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { Plus, Trash2, Calendar, Building2, Briefcase } from "lucide-react";
+import { Plus, Trash2, Calendar, Building2, Briefcase, MapPin } from "lucide-react";
 import AiAssistantButton from "@/components/ai/ai-assistant-button";
+import DatePicker from "@/components/ui/date-picker";
 
 interface ExperienceFormProps {
   experienceData: CVData["experience"];
@@ -102,16 +103,21 @@ const ExperienceForm = ({
               {/* Position & Company */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Job Title / Position</Label>
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 h-5 whitespace-nowrap">
+                    <Briefcase className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Job Title / Position *
+                  </Label>
                   <Input
                     type="text"
                     value={exp.title || ""}
                     onChange={(e) => updateArrayItem(index, "title", e.target.value)}
                     placeholder="e.g. Senior Software Engineer"
+                    className="rounded-xl"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Company Name</Label>
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 h-5 whitespace-nowrap">
+                    <Building2 className="w-3.5 h-3.5 text-purple-400 shrink-0" /> Company Name *
+                  </Label>
                   <Input
                     type="text"
                     value={exp.company || exp.companyName || ""}
@@ -120,37 +126,46 @@ const ExperienceForm = ({
                       updateArrayItem(index, "companyName", e.target.value);
                     }}
                     placeholder="e.g. Google or Stripe"
+                    className="rounded-xl"
                   />
                 </div>
               </div>
 
               {/* Dates & Location */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Start Date</Label>
-                  <Input
-                    type="text"
-                    value={typeof exp.startDate === "string" ? exp.startDate : exp.startDate ? new Date(exp.startDate).toLocaleDateString() : ""}
-                    onChange={(e) => updateArrayItem(index, "startDate", e.target.value)}
-                    placeholder="e.g. Jan 2021"
+                  <Label className="text-xs font-medium flex items-center gap-1.5 h-5 whitespace-nowrap text-foreground/90">
+                    <Calendar className="w-3.5 h-3.5 text-cyan-500 shrink-0" /> Start Date
+                  </Label>
+                  <DatePicker
+                    mode="month-year"
+                    value={typeof exp.startDate === "string" ? exp.startDate : exp.startDate ? new Date(exp.startDate).toISOString() : ""}
+                    onChange={(val) => updateArrayItem(index, "startDate", val)}
+                    placeholder="Pick start date..."
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">End Date</Label>
-                  <Input
-                    type="text"
-                    value={typeof exp.endDate === "string" ? exp.endDate : exp.endDate ? new Date(exp.endDate).toLocaleDateString() : ""}
-                    onChange={(e) => updateArrayItem(index, "endDate", e.target.value)}
-                    placeholder="e.g. Present or Mar 2023"
+                  <Label className="text-xs font-medium flex items-center gap-1.5 h-5 whitespace-nowrap text-foreground/90">
+                    <Calendar className="w-3.5 h-3.5 text-purple-500 shrink-0" /> End Date
+                  </Label>
+                  <DatePicker
+                    mode="month-year"
+                    allowPresent={true}
+                    value={typeof exp.endDate === "string" ? exp.endDate : exp.endDate ? new Date(exp.endDate).toISOString() : ""}
+                    onChange={(val) => updateArrayItem(index, "endDate", val)}
+                    placeholder="Pick end date..."
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Location</Label>
+                  <Label className="text-xs font-medium flex items-center gap-1.5 h-5 whitespace-nowrap text-foreground/90">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Location
+                  </Label>
                   <Input
                     type="text"
                     value={exp.location || ""}
                     onChange={(e) => updateArrayItem(index, "location", e.target.value)}
                     placeholder="e.g. Remote / New York, NY"
+                    className="rounded-xl text-xs"
                   />
                 </div>
               </div>

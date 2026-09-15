@@ -267,7 +267,7 @@ export default function ImageCropModal({
           </div>
         </div>
 
-        <DialogFooter className="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-border/60 pt-3">
+        <DialogFooter className="sticky bottom-0 bg-slate-900/95 backdrop-blur z-10 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-border/60 pt-3 pb-1">
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Button
               type="button"

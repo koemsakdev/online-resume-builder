@@ -14,10 +14,15 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (user) return;
 
-    const accessToken = localStorage.getItem("token");
+    const accessToken = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!accessToken) {
       setLoading(false);
       return;
+    }
+
+    // Keep cookie synchronized for middleware
+    if (!document.cookie.includes("token=")) {
+      document.cookie = `token=${accessToken}; path=/; max-age=604800; SameSite=Lax`;
     }
 
     const fetchUser = async () => {
@@ -36,13 +41,17 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateUser = (userData: any) => {
     setUser(userData);
-    localStorage.setItem("token", userData.token);
+    if (userData?.token) {
+      localStorage.setItem("token", userData.token);
+      document.cookie = `token=${userData.token}; path=/; max-age=604800; SameSite=Lax`;
+    }
     setLoading(false);
   };
 
   const clearUser = () => {
     setUser(null);
     localStorage.removeItem("token");
+    document.cookie = "token=; path=/; max-age=0; SameSite=Lax";
   };
 
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";

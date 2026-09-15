@@ -25,6 +25,8 @@ import {
 import { Button } from "../ui/button";
 import AiAssistantButton from "@/components/ai/ai-assistant-button";
 import ImageCropModal from "@/components/ui/image-crop-modal";
+import Combobox from "@/components/ui/combobox";
+import DatePicker from "@/components/ui/date-picker";
 
 interface ProfileInfoFormProps {
   profileData: CVData["contact"];
@@ -250,10 +252,10 @@ const ProfileInfoForm = ({
       </div>
 
       {/* NEW HR-Requested Personal Details */}
-      <div className="p-4 rounded-2xl border border-border/70 bg-muted/20 space-y-4">
+      <div className="p-4 rounded-2xl border border-border/80 bg-muted/40 dark:bg-muted/20 space-y-4 shadow-sm">
         <div className="flex items-center gap-2 border-b border-border/60 pb-2">
-          <UserCheck className="w-4 h-4 text-cyan-400" />
-          <h3 className="text-xs font-bold uppercase tracking-wider text-cyan-300">
+          <UserCheck className="w-4 h-4 text-cyan-500" />
+          <h3 className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-300">
             HR &amp; Personal Details (Optional for International / Local HR)
           </h3>
         </div>
@@ -261,94 +263,113 @@ const ProfileInfoForm = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {/* Date of Birth */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium flex items-center gap-1 text-slate-300">
-              <Calendar className="w-3.5 h-3.5 text-cyan-400" /> Date of Birth
+            <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground/90 h-5 whitespace-nowrap overflow-hidden text-ellipsis">
+              <Calendar className="w-3.5 h-3.5 text-cyan-500 shrink-0" /> Date of Birth
             </Label>
-            <Input
-              type="date"
+            <DatePicker
+              mode="date"
               value={profileData?.dateOfBirth || ""}
-              onChange={(e) => onUpdateSection("dateOfBirth", e.target.value)}
-              className="rounded-xl text-xs"
+              onChange={(val) => onUpdateSection("dateOfBirth", val)}
+              placeholder="Select birth date..."
             />
           </div>
 
           {/* Marital Status */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium flex items-center gap-1 text-slate-300">
-              <Heart className="w-3.5 h-3.5 text-rose-400" /> Marital Status
+            <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground/90 h-5 whitespace-nowrap overflow-hidden text-ellipsis">
+              <Heart className="w-3.5 h-3.5 text-rose-500 shrink-0" /> Marital Status
             </Label>
-            <select
+            <Combobox
+              options={["Single", "Married", "Divorced", "Widowed", "Prefer not to say"]}
               value={profileData?.maritalStatus || ""}
-              onChange={(e) => onUpdateSection("maritalStatus", e.target.value)}
-              className="w-full h-10 px-3 rounded-xl border border-border/80 bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-cyan-400"
-            >
-              <option value="">Select status...</option>
-              <option value="Single">Single</option>
-              <option value="Married">Married</option>
-              <option value="Divorced">Divorced</option>
-              <option value="Widowed">Widowed</option>
-              <option value="Prefer not to say">Prefer not to say</option>
-            </select>
+              onChange={(val) => onUpdateSection("maritalStatus", val)}
+              placeholder="Select status..."
+              searchPlaceholder="Search status..."
+            />
           </div>
 
           {/* Nationality */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium flex items-center gap-1 text-slate-300">
-              <Flag className="w-3.5 h-3.5 text-amber-400" /> Nationality / Citizenship
+            <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground/90 h-5 whitespace-nowrap overflow-hidden text-ellipsis">
+              <Flag className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Nationality / Citizenship
             </Label>
-            <Input
-              type="text"
+            <Combobox
+              options={[
+                "Cambodian",
+                "American",
+                "British",
+                "Canadian",
+                "Australian",
+                "Singaporean",
+                "French",
+                "German",
+                "Japanese",
+                "Korean",
+                "Chinese",
+                "Indian",
+              ]}
               value={profileData?.nationality || ""}
-              onChange={(e) => onUpdateSection("nationality", e.target.value)}
+              onChange={(val) => onUpdateSection("nationality", val)}
               placeholder="e.g. Cambodian, American"
-              className="rounded-xl text-xs"
+              searchPlaceholder="Search or type nationality..."
+              allowCustom={true}
             />
           </div>
 
           {/* Gender */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium flex items-center gap-1 text-slate-300">
-              <UserCheck className="w-3.5 h-3.5 text-purple-400" /> Gender / Pronouns
+            <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground/90 h-5 whitespace-nowrap overflow-hidden text-ellipsis">
+              <UserCheck className="w-3.5 h-3.5 text-purple-500 shrink-0" /> Gender / Pronouns
             </Label>
-            <select
+            <Combobox
+              options={["Male", "Female", "Non-binary", "Other", "Prefer not to say"]}
               value={profileData?.gender || ""}
-              onChange={(e) => onUpdateSection("gender", e.target.value)}
-              className="w-full h-10 px-3 rounded-xl border border-border/80 bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-cyan-400"
-            >
-              <option value="">Select gender...</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Non-binary">Non-binary</option>
-              <option value="Other">Other</option>
-              <option value="Prefer not to say">Prefer not to say</option>
-            </select>
+              onChange={(val) => onUpdateSection("gender", val)}
+              placeholder="Select gender..."
+              searchPlaceholder="Search gender..."
+            />
           </div>
 
           {/* Visa / Work Authorization */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium flex items-center gap-1 text-slate-300">
-              <CreditCard className="w-3.5 h-3.5 text-emerald-400" /> Visa / Work Authorization
+            <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground/90 h-5 whitespace-nowrap overflow-hidden text-ellipsis">
+              <CreditCard className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Work Authorization
             </Label>
-            <Input
-              type="text"
+            <Combobox
+              options={[
+                "Citizen",
+                "Permanent Resident / Green Card",
+                "Employment Visa / Work Permit",
+                "Student Visa (OPT / CPT)",
+                "Authorized to work for any employer",
+                "Requires Sponsorship",
+              ]}
               value={profileData?.visaStatus || ""}
-              onChange={(e) => onUpdateSection("visaStatus", e.target.value)}
-              placeholder="e.g. Citizen, Permanent Resident, H-1B"
-              className="rounded-xl text-xs"
+              onChange={(val) => onUpdateSection("visaStatus", val)}
+              placeholder="e.g. Citizen, PR, H-1B"
+              searchPlaceholder="Select or type status..."
+              allowCustom={true}
             />
           </div>
 
           {/* Driving License */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium flex items-center gap-1 text-slate-300">
-              <Car className="w-3.5 h-3.5 text-blue-400" /> Driving License
+            <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground/90 h-5 whitespace-nowrap overflow-hidden text-ellipsis">
+              <Car className="w-3.5 h-3.5 text-blue-500 shrink-0" /> Driving License
             </Label>
-            <Input
-              type="text"
+            <Combobox
+              options={[
+                "Clean Driving License",
+                "Class A / Commercial",
+                "Class B (Car / Light Vehicle)",
+                "Motorcycle License",
+                "None",
+              ]}
               value={profileData?.drivingLicense || ""}
-              onChange={(e) => onUpdateSection("drivingLicense", e.target.value)}
-              placeholder="e.g. Clean Driver's License, Class B"
-              className="rounded-xl text-xs"
+              onChange={(val) => onUpdateSection("drivingLicense", val)}
+              placeholder="e.g. Clean Driver's License"
+              searchPlaceholder="Select or type license..."
+              allowCustom={true}
             />
           </div>
         </div>

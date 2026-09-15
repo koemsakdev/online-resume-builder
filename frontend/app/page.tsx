@@ -1,15 +1,39 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import NavBar from "@/components/nav-bar";
 import Hero from "@/components/hero";
 import Feature from "@/components/feature";
 import WorkingStep from "@/components/cards/working-step";
 import TemplateShowcase from "@/components/template-showcase";
-import Testimonial from "@/components/testimonial";
 import CtaBanner from "@/components/cta-banner";
 import Footer from "@/components/footer";
-import { Users, CheckCircle2, TrendingUp, Zap } from "lucide-react";
+import { ShieldCheck, Download, LayoutTemplate, Lock } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (token) {
+      router.replace("/dashboard");
+    } else {
+      setIsCheckingAuth(false);
+    }
+  }, [router]);
+
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin" />
+          <p className="text-xs text-muted-foreground font-medium">Loading workspace...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground antialiased selection:bg-cyan-500/20 selection:text-cyan-300">
       {/* Top Navbar */}
@@ -19,37 +43,37 @@ export default function Home() {
         {/* Hero Section */}
         <Hero />
 
-        {/* Stats & Trust Bar */}
-        <section className="w-full py-10 border-y border-border/50 bg-muted/20 backdrop-blur-sm">
+        {/* Feature Highlights Bar */}
+        <section className="w-full py-8 border-y border-border/50 bg-muted/20 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               <div className="space-y-1">
-                <div className="flex items-center justify-center gap-1.5 text-2xl sm:text-3xl font-black brand-gradient-text">
-                  <Users className="w-5 h-5 text-cyan-400" />
-                  50,000+
+                <div className="flex items-center justify-center gap-1.5 text-lg sm:text-xl font-extrabold brand-gradient-text">
+                  <ShieldCheck className="w-5 h-5 text-cyan-500" />
+                  ATS-Optimized
                 </div>
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium">Resumes Crafted</p>
+                <p className="text-xs text-muted-foreground font-medium">Recruiter-ready layout standards</p>
               </div>
               <div className="space-y-1">
-                <div className="flex items-center justify-center gap-1.5 text-2xl sm:text-3xl font-black brand-gradient-text">
-                  <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                  99%
+                <div className="flex items-center justify-center gap-1.5 text-lg sm:text-xl font-extrabold brand-gradient-text">
+                  <Download className="w-5 h-5 text-purple-500" />
+                  Instant Export
                 </div>
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium">ATS Pass Rate</p>
+                <p className="text-xs text-muted-foreground font-medium">High-resolution clean PDF download</p>
               </div>
               <div className="space-y-1">
-                <div className="flex items-center justify-center gap-1.5 text-2xl sm:text-3xl font-black brand-gradient-text">
-                  <TrendingUp className="w-5 h-5 text-sky-400" />
-                  3.5x
+                <div className="flex items-center justify-center gap-1.5 text-lg sm:text-xl font-extrabold brand-gradient-text">
+                  <LayoutTemplate className="w-5 h-5 text-sky-500" />
+                  18+ Formats
                 </div>
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium">More Interviews</p>
+                <p className="text-xs text-muted-foreground font-medium">Crafted for diverse job industries</p>
               </div>
               <div className="space-y-1">
-                <div className="flex items-center justify-center gap-1.5 text-2xl sm:text-3xl font-black brand-gradient-text">
-                  <Zap className="w-5 h-5 text-fuchsia-400" />
-                  &lt; 10 min
+                <div className="flex items-center justify-center gap-1.5 text-lg sm:text-xl font-extrabold brand-gradient-text">
+                  <Lock className="w-5 h-5 text-emerald-500" />
+                  100% Free
                 </div>
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium">Fast Generation</p>
+                <p className="text-xs text-muted-foreground font-medium">No paywalls or hidden fees</p>
               </div>
             </div>
           </div>
@@ -63,9 +87,6 @@ export default function Home() {
 
         {/* Template Showcase */}
         <TemplateShowcase />
-
-        {/* Testimonials */}
-        <Testimonial />
 
         {/* Final CTA Banner */}
         <CtaBanner />

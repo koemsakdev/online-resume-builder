@@ -18,25 +18,14 @@ const WhiteSimpleCollegeAndFreshGraduate = ({
   resumeData,
   containerWidth,
 }: WhiteSimpleCollegeAndFreshGraduateProps) => {
-  const resumeRef = useRef(null);
-  const [baseWidth, setBaseWidth] = useState(800);
-  const [scal, setScal] = useState(1);
+  const scale = containerWidth > 0 && containerWidth !== 800 ? containerWidth / 800 : 1;
 
-  useEffect(() => {
-    const actualBaseWidth = (resumeRef.current as unknown as HTMLDivElement)
-      ?.offsetWidth;
-    setBaseWidth(actualBaseWidth);
-    setScal(containerWidth / actualBaseWidth);
-  }, [containerWidth]);
   return (
     <div
-      ref={resumeRef}
-      className="flex flex-col border rounded-sm px-8 py-16"
+      className="flex flex-col bg-white text-slate-900 p-8 w-[800px] min-h-[1131px]"
       style={{
-        transform: containerWidth > 0 ? `scale(${scal})` : `none`,
+        transform: scale !== 1 ? `scale(${scale})` : undefined,
         transformOrigin: "top left",
-        width: containerWidth > 0 ? `${baseWidth}px` : `auto`,
-        height: "auto",
       }}
     >
       {/* Header Profile Picture, Title, Name, and Summary */}
@@ -107,10 +96,10 @@ const WhiteSimpleCollegeAndFreshGraduate = ({
           {/* Personal Details */}
           {(resumeData.contact.dateOfBirth || resumeData.contact.maritalStatus || resumeData.contact.nationality || resumeData.contact.visaStatus || resumeData.contact.drivingLicense || resumeData.contact.gender) && (
             <section className="mb-6 w-full">
-              <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-neutral-200 dark:bg-neutral-800 dark:text-slate-200 rounded-sm">
+              <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-slate-100 text-slate-800 rounded-sm">
                 Personal Details
               </h2>
-              <div className="space-y-2 px-3 py-3 text-xs text-gray-700 dark:text-slate-300">
+              <div className="space-y-2 px-3 py-3 text-xs text-slate-700">
                 {resumeData.contact.dateOfBirth && (
                   <div>
                     <span className="font-bold block text-[10px] uppercase text-gray-500">Date of Birth:</span>
@@ -153,20 +142,20 @@ const WhiteSimpleCollegeAndFreshGraduate = ({
 
           {/* Education */}
           <section className="mb-6 w-full">
-            <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-neutral-200 dark:bg-neutral-800 dark:text-slate-200 rounded-sm">
+            <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-slate-100 text-slate-800 rounded-sm">
               Education
             </h2>
             <div className="space-y-3 px-3 py-3">
               <div className="flex flex-wrap gap-3">
                 {resumeData.education.map((edu, index) => (
                   <div key={index} className="flex flex-col">
-                    <span className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                    <span className="text-lg font-bold text-slate-800">
                       {edu.university}
                     </span>
-                    <span className="text-base text-slate-600 font-bold dark:text-slate-200">
+                    <span className="text-base text-slate-600 font-bold">
                       {edu.degree}
                     </span>
-                    <span className="text-sm text-slate-800 dark:text-slate-200">
+                    <span className="text-sm text-slate-700">
                       {formatSafeDate(edu.startDate, "yyyy")} -{" "}
                       {formatSafeDate(edu.endDate, "yyyy")}
                     </span>
@@ -176,17 +165,17 @@ const WhiteSimpleCollegeAndFreshGraduate = ({
             </div>
           </section>
 
-          {/* Contact */}
+          {/* Skills */}
           <section className="mb-6 w-full">
-            <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-neutral-200 dark:bg-neutral-800 dark:text-slate-200 rounded-sm">
+            <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-slate-100 text-slate-800 rounded-sm">
               Skills
             </h2>
             <div className="px-2 py-3">
-              <ul className="list-disc list-outside ml-5 text-gray-600 dark:text-slate-200 space-y-1">
+              <ul className="list-disc list-outside ml-5 text-slate-700 space-y-1">
                 {resumeData.skills.map((skill, index) => (
                   <li
                     key={index}
-                    className="text-gray-600 dark:text-slate-400 text-sm"
+                    className="text-slate-700 text-sm"
                   >
                     {skill.name}
                   </li>
@@ -199,31 +188,31 @@ const WhiteSimpleCollegeAndFreshGraduate = ({
         <div className="w-2/3 px-4 py-4">
           {/* Experience */}
           <section className="w-full">
-            <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-neutral-200 dark:bg-neutral-800 dark:text-slate-200 rounded-sm">
+            <h2 className="uppercase text-xl tracking-wider font-extrabold px-3 py-1 bg-slate-100 text-slate-800 rounded-sm">
               Experience
             </h2>
             <div className="px-2 mt-2">
-              <div className="relative border-l-2 border-slate-300 dark:border-slate-600">
+              <div className="relative border-l-2 border-slate-300">
                 {resumeData.experience.map((exp, index) => (
                   <div key={index} className="mb-10 relative">
-                    <div className="absolute left-0 top-0 transform -translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full border-1 border-white dark:border-slate-800 z-10"></div>
+                    <div className="absolute left-0 top-0 transform -translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full border-1 border-white z-10"></div>
                     <div className="flex flex-col gap-y-1 ml-6">
-                      <span className="text-lg mt-[-7px] font-semibold text-slate-800 dark:text-slate-200">
+                      <span className="text-lg mt-[-7px] font-semibold text-slate-800">
                         {exp.title}
                       </span>
                       <div className="flex items-center justify-between">
-                        <div className="text-base text-slate-600 dark:text-slate-300">
+                        <div className="text-base text-slate-600">
                           <span>{exp.company}</span>
                         </div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400">
+                        <div className="text-sm text-slate-500">
                           {formatSafeDate(exp.startDate, "yyyy")} - {formatSafeDate(exp.endDate, "yyyy")}
                         </div>
                       </div>
-                      <ul className="list-disc list-outside ml-4 text-sm text-gray-600 dark:text-slate-200 space-y-1">
+                      <ul className="list-disc list-outside ml-4 text-sm text-slate-600 space-y-1">
                         {exp.responsibilities.map((resp, idx) => (
                           <li
                             key={idx}
-                            className="text-gray-700 dark:text-slate-300 text-sm"
+                            className="text-slate-700 text-sm"
                           >
                             {resp}
                           </li>
@@ -288,26 +277,26 @@ const WhiteSimpleCollegeAndFreshGraduate = ({
               <div className="grid grid-cols-2 lg:grid-cols-2 lg:text-left gap-4 px-2 py-3">
                 {resumeData.references.map((ref, index) => (
                   <div key={index} className="mb-4">
-                    <h3 className="font-extrabold text-lg text-gray-900 dark:text-slate-200">
+                    <h3 className="font-extrabold text-lg text-slate-900">
                       {ref.company}
                     </h3>
-                    <h3 className="text-base text-gray-800 dark:text-slate-200 mb-1">
+                    <h3 className="text-base text-slate-800 mb-1">
                       {ref.name} / {ref.position}
                     </h3>
                     {ref.relationship && (
-                      <p className="text-xs text-gray-500 dark:text-slate-400 italic mb-1.5">
+                      <p className="text-xs text-slate-500 italic mb-1.5">
                         {ref.relationship}
                       </p>
                     )}
                     <p className="text-sm">
-                      <strong>Phone: </strong>{" "}
-                      <span className="text-gray-600 dark:text-slate-400">
+                      <strong className="text-slate-800">Phone: </strong>{" "}
+                      <span className="text-slate-600">
                         {ref.phone}
                       </span>
                     </p>
                     <p className="text-sm">
-                      <strong>Email: </strong>{" "}
-                      <span className="text-gray-600 dark:text-slate-400">
+                      <strong className="text-slate-800">Email: </strong>{" "}
+                      <span className="text-slate-600">
                         {ref.email}
                       </span>
                     </p>

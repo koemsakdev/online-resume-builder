@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import UserProvider from "@/contexts/useContext";
 import { Toaster } from "@/components/ui/toaster";
 import AppShell from "@/components/layouts/app-shell";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ResumeRise | AI Resume & CV Builder",
@@ -30,7 +27,19 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} m-0 p-0 min-h-screen bg-background text-foreground antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.cdnfonts.com/css/google-sans"
+        />
+      </head>
+      <body className="font-sans m-0 p-0 min-h-screen bg-background text-foreground antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

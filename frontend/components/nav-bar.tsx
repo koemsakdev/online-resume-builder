@@ -43,9 +43,6 @@ const NavBar = () => {
           <a href="#templates" className="hover:text-foreground transition-colors">
             Templates
           </a>
-          <a href="#reviews" className="hover:text-foreground transition-colors">
-            Reviews
-          </a>
         </nav>
 
         {/* Right CTA Actions */}
@@ -75,7 +72,7 @@ const NavBar = () => {
                 </Link>
               </Button>
               <Button asChild size="sm" className="brand-gradient-btn rounded-full px-4 text-xs font-semibold shadow-md shadow-cyan-500/20">
-                <Link href="/dashboard" className="flex items-center gap-1">
+                <Link href="/sign-up" className="flex items-center gap-1">
                   Get Started Free
                   <ArrowRight className="w-3.5 h-3.5 ml-1" />
                 </Link>

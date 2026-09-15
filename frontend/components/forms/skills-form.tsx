@@ -5,7 +5,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Plus, Trash2, Zap, Sparkles } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import Combobox from "@/components/ui/combobox";
 
 interface SkillsFormProps {
   skillsData: CVData["skills"];
@@ -67,17 +67,16 @@ const SkillsForm = ({
             placeholder="e.g. React, Python, Product Strategy..."
             className="flex-1"
           />
-          <Select value={newProficiency} onValueChange={setNewProficiency}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Beginner">Beginner</SelectItem>
-              <SelectItem value="Intermediate">Intermediate</SelectItem>
-              <SelectItem value="Advanced">Advanced</SelectItem>
-              <SelectItem value="Expert">Expert</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="w-full sm:w-[150px] shrink-0">
+            <Combobox
+              options={["Beginner", "Intermediate", "Advanced", "Expert"]}
+              value={newProficiency}
+              onChange={setNewProficiency}
+              placeholder="Proficiency"
+              searchPlaceholder="Select level..."
+              allowCustom={false}
+            />
+          </div>
           <Button
             type="button"
             onClick={handleQuickAdd}
@@ -131,12 +130,12 @@ const SkillsForm = ({
             {skillsData.map((skill, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 rounded-lg border border-border/60 bg-card/40 hover:border-cyan-500/30 transition-colors"
+                className="flex items-center justify-between p-3 rounded-xl border border-border/80 bg-card/90 dark:bg-card/60 shadow-sm hover:border-cyan-500/30 transition-colors"
               >
                 <div className="flex items-center gap-2.5 flex-1 mr-2">
-                  <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                  <div className="w-2 h-2 rounded-full bg-cyan-500" />
                   <span className="text-sm font-medium">{skill.name || skill.skillName}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300 font-semibold border border-purple-500/20">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-700 dark:text-purple-300 font-semibold border border-purple-500/20">
                     {skill.proficiency || "Intermediate"}
                   </span>
                 </div>

@@ -17,26 +17,14 @@ const ProfessionalMinimalist = ({
   resumeData,
   containerWidth,
 }: ProfessionalMinimalistProps) => {
-  const resumeRef = useRef(null);
-  const [baseWidth, setBaseWidth] = useState(800);
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    const actualBaseWidth = (resumeRef.current as unknown as HTMLDivElement)
-      ?.offsetWidth;
-    setBaseWidth(actualBaseWidth);
-    setScale(containerWidth / actualBaseWidth);
-  }, [containerWidth]);
+  const scale = containerWidth > 0 && containerWidth !== 800 ? containerWidth / 800 : 1;
 
   return (
     <div
-      ref={resumeRef}
-      className="border shadow-sm rounded-sm px-5 py-16"
+      className="bg-white text-slate-800 p-8 w-[800px] min-h-[1131px]"
       style={{
-        transform: containerWidth > 0 ? `scale(${scale})` : `none`,
+        transform: scale !== 1 ? `scale(${scale})` : undefined,
         transformOrigin: "top left",
-        width: containerWidth > 0 ? `${baseWidth}px` : `auto`,
-        height: "auto",
       }}
     >
       {/* Contact Information */}
@@ -179,43 +167,43 @@ const ProfessionalMinimalist = ({
           {/* Personal Details */}
           {(resumeData.contact.dateOfBirth || resumeData.contact.maritalStatus || resumeData.contact.nationality || resumeData.contact.visaStatus || resumeData.contact.drivingLicense || resumeData.contact.gender) && (
             <section className="mb-6">
-              <h2 className="uppercase text-lg tracking-wider font-extrabold mb-3">
+              <h2 className="uppercase text-lg tracking-wider font-extrabold mb-3 text-slate-800">
                 Personal Info
               </h2>
-              <div className="space-y-2 text-xs text-gray-600 dark:text-slate-400">
+              <div className="space-y-2 text-xs text-slate-600">
                 {resumeData.contact.dateOfBirth && (
                   <div>
-                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Date of Birth</span>
+                    <span className="font-bold text-slate-800 block text-[10px] uppercase">Date of Birth</span>
                     <span>{resumeData.contact.dateOfBirth}</span>
                   </div>
                 )}
                 {resumeData.contact.maritalStatus && (
                   <div>
-                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Marital Status</span>
+                    <span className="font-bold text-slate-800 block text-[10px] uppercase">Marital Status</span>
                     <span>{resumeData.contact.maritalStatus}</span>
                   </div>
                 )}
                 {resumeData.contact.nationality && (
                   <div>
-                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Nationality</span>
+                    <span className="font-bold text-slate-800 block text-[10px] uppercase">Nationality</span>
                     <span>{resumeData.contact.nationality}</span>
                   </div>
                 )}
                 {resumeData.contact.gender && (
                   <div>
-                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Gender</span>
+                    <span className="font-bold text-slate-800 block text-[10px] uppercase">Gender</span>
                     <span>{resumeData.contact.gender}</span>
                   </div>
                 )}
                 {resumeData.contact.visaStatus && (
                   <div>
-                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Work Authorization</span>
+                    <span className="font-bold text-slate-800 block text-[10px] uppercase">Work Authorization</span>
                     <span>{resumeData.contact.visaStatus}</span>
                   </div>
                 )}
                 {resumeData.contact.drivingLicense && (
                   <div>
-                    <span className="font-bold text-gray-800 dark:text-slate-200 block text-[10px] uppercase">Driving License</span>
+                    <span className="font-bold text-slate-800 block text-[10px] uppercase">Driving License</span>
                     <span>{resumeData.contact.drivingLicense}</span>
                   </div>
                 )}
@@ -226,38 +214,38 @@ const ProfessionalMinimalist = ({
         <div className="w-2/3 px-6 py-4">
           {/* Summary */}
           <section className="mb-6">
-            <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3">
+            <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3 text-slate-800">
               Profile
             </h2>
-            <p className="text-gray-600 dark:text-slate-400">
+            <p className="text-slate-600 text-sm leading-relaxed">
               {resumeData.summary}
             </p>
           </section>
 
           {/* Experience */}
           <section className="mb-6">
-            <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3">
+            <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3 text-slate-800">
               Work Experience
             </h2>
             {resumeData.experience.map((exp, index) => (
               <div key={index} className="mb-4">
                 <div className="flex justify-between text-lg">
-                  <p className="font-bold text-gray-900 dark:text-slate-200 mb-1">
+                  <p className="font-bold text-slate-900 mb-1">
                     {exp.company}
                   </p>
-                  <span className="font-bold text-gray-900 dark:text-slate-300 ">
+                  <span className="font-bold text-slate-700 text-sm">
                     {formatSafeDate(exp.startDate, "yyyy")} -{" "}
                     {formatSafeDate(exp.endDate, "yyyy")}
                   </span>
                 </div>
-                <h3 className="text-gray-700 dark:text-slate-300">
+                <h3 className="text-slate-700 text-sm font-semibold">
                   {exp.title}
                 </h3>
-                <ul className="list-disc list-outside ml-5 text-sm text-gray-600 dark:text-slate-200 space-y-1">
+                <ul className="list-disc list-outside ml-5 text-sm text-slate-600 space-y-1">
                   {exp.responsibilities.map((resp, idx) => (
                     <li
                       key={idx}
-                      className="text-gray-700 dark:text-slate-300 text-sm"
+                      className="text-slate-700 text-sm"
                     >
                       {resp}
                     </li>
@@ -270,32 +258,32 @@ const ProfessionalMinimalist = ({
           {/* References - Hidden by default, shown on request */}
           {resumeData.references && resumeData.references.length > 0 && (
             <section className="mb-6">
-              <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3">
+              <h2 className="uppercase text-xl tracking-wider font-extrabold mb-3 text-slate-800">
                 References
               </h2>
               <div className="grid grid-cols-2 lg:grid-cols-2 lg:text-left gap-4">
                 {resumeData.references.map((ref, index) => (
                   <div key={index} className="mb-4">
-                    <h3 className="font-extrabold text-lg text-gray-900 dark:text-slate-200">
+                    <h3 className="font-extrabold text-lg text-slate-900">
                       {ref.company}
                     </h3>
-                    <h3 className="text-base text-gray-800 dark:text-slate-200 mb-1">
+                    <h3 className="text-base text-slate-800 mb-1">
                       {ref.name} / {ref.position}
                     </h3>
                     {ref.relationship && (
-                      <p className="text-xs text-gray-500 dark:text-slate-400 italic mb-1.5">
+                      <p className="text-xs text-slate-500 italic mb-1.5">
                         {ref.relationship}
                       </p>
                     )}
                     <p className="text-sm">
-                      <strong>Phone: </strong>{" "}
-                      <span className="text-gray-600 dark:text-slate-400">
+                      <strong className="text-slate-800">Phone: </strong>{" "}
+                      <span className="text-slate-600">
                         {ref.phone}
                       </span>
                     </p>
                     <p className="text-sm">
-                      <strong>Email: </strong>{" "}
-                      <span className="text-gray-600 dark:text-slate-400">
+                      <strong className="text-slate-800">Email: </strong>{" "}
+                      <span className="text-slate-600">
                         {ref.email}
                       </span>
                     </p>

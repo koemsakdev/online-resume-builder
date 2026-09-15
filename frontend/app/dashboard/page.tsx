@@ -42,6 +42,7 @@ import NavbarLayout from "@/components/layouts/navbar-layout";
 import { templateList } from "@/constants";
 import { UserContext } from "@/contexts/useContext";
 import { TemplateThumbnail } from "@/components/templates/template-thumbnail";
+import AuthGuard from "@/components/auth/auth-guard";
 
 interface ResumeItem {
   _id: string;
@@ -198,25 +199,26 @@ export default function Dashboard() {
   });
 
   return (
-    <NavbarLayout>
-      <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+    <AuthGuard>
+      <NavbarLayout>
+        <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
         
         {/* Welcome Hero Banner */}
-        <div className="relative rounded-3xl overflow-hidden border border-border/80 bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950/80 p-6 sm:p-8 shadow-2xl">
-          <div className="absolute top-0 right-0 w-96 h-96 cyan-glow pointer-events-none opacity-20 -mr-20 -mt-20" />
+        <div className="relative rounded-3xl overflow-hidden border border-slate-200/80 dark:border-border/80 bg-gradient-to-br from-white via-slate-50/90 to-cyan-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/80 p-6 sm:p-8 shadow-md shadow-slate-200/50 dark:shadow-2xl">
+          <div className="absolute top-0 right-0 w-96 h-96 cyan-glow pointer-events-none opacity-10 dark:opacity-20 -mr-20 -mt-20" />
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-semibold text-cyan-300">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-semibold text-cyan-600 dark:text-cyan-300">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Smart Resume Studio</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground">
                 Welcome back,{" "}
                 <span className="brand-gradient-text">
                   {user?.name?.split(" ")[0] || "Creator"}
                 </span>
               </h1>
-              <p className="text-sm text-slate-300 max-w-xl">
+              <p className="text-sm text-muted-foreground max-w-xl">
                 Manage your job-targeted resumes, test them against applicant tracking systems, and land your next interview faster.
               </p>
             </div>
@@ -226,7 +228,7 @@ export default function Dashboard() {
               <Button
                 onClick={() => setCreateModalOpen(true)}
                 size="lg"
-                className="brand-gradient-btn rounded-2xl px-6 py-6 text-sm font-semibold shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40"
+                className="brand-gradient-btn rounded-2xl px-6 py-6 text-sm font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 <span>Create Resume</span>
@@ -235,18 +237,18 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/10 text-white">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-8 pt-6 border-t border-border/70 text-foreground">
             <div>
-              <p className="text-xs text-slate-400 font-medium">Total Resumes</p>
-              <p className="text-2xl font-black text-cyan-300 mt-0.5">{resumes.length}</p>
+              <p className="text-xs text-muted-foreground font-medium">Total Resumes</p>
+              <p className="text-2xl font-black text-cyan-600 dark:text-cyan-300 mt-0.5">{resumes.length}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 font-medium">ATS Score Standard</p>
-              <p className="text-2xl font-black text-purple-300 mt-0.5">98%</p>
+              <p className="text-xs text-muted-foreground font-medium">ATS Score Standard</p>
+              <p className="text-2xl font-black text-purple-600 dark:text-purple-300 mt-0.5">98%</p>
             </div>
             <div className="col-span-2 sm:col-span-1">
-              <p className="text-xs text-slate-400 font-medium">Active Layouts</p>
-              <p className="text-2xl font-black text-emerald-300 mt-0.5">4 Ready</p>
+              <p className="text-xs text-muted-foreground font-medium">Active Layouts</p>
+              <p className="text-2xl font-black text-emerald-600 dark:text-emerald-300 mt-0.5">4 Ready</p>
             </div>
           </div>
         </div>
@@ -259,7 +261,7 @@ export default function Dashboard() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search resumes by title..."
-              className="pl-10 rounded-xl border-border/80 bg-card/60"
+              className="pl-10 rounded-xl border-border/80 bg-card shadow-sm"
             />
           </div>
 
@@ -270,8 +272,8 @@ export default function Dashboard() {
                 onClick={() => setSelectedFilter(filter)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                   selectedFilter === filter
-                    ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-sm"
-                    : "bg-card/60 text-muted-foreground border border-border/70 hover:text-foreground"
+                    ? "bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-sm"
+                    : "bg-card text-muted-foreground border border-border/80 hover:text-foreground hover:bg-muted/60 shadow-sm"
                 }`}
               >
                 {filter}
@@ -322,7 +324,7 @@ export default function Dashboard() {
               return (
                 <div
                   key={resume._id}
-                  className="group relative rounded-2xl border border-border/70 bg-card/80 backdrop-blur-md overflow-hidden flex flex-col transition-all duration-300 hover:border-cyan-500/50 hover:shadow-2xl hover:shadow-cyan-950/20 hover:-translate-y-1.5"
+                  className="group relative rounded-2xl border border-border/80 bg-card/90 dark:bg-card/80 backdrop-blur-md overflow-hidden flex flex-col transition-all duration-300 hover:border-cyan-500/50 shadow-md shadow-slate-200/50 dark:shadow-none hover:shadow-xl hover:shadow-cyan-500/15 dark:hover:shadow-2xl dark:hover:shadow-cyan-950/30 hover:-translate-y-1.5"
                 >
                   {/* Real Scaled Template Thumbnail Preview */}
                   <div
@@ -331,10 +333,7 @@ export default function Dashboard() {
                   >
                     <TemplateThumbnail
                       templateId={resume.template || "black_white_minimalist"}
-                      resumeData={{
-                        name: resume.title || "My Resume",
-                        title: resume.title || "Resume",
-                      }}
+                      resumeData={resume as any}
                     />
 
                     {/* Template Badge */}
@@ -499,7 +498,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="sticky bottom-0 bg-card/95 backdrop-blur z-10 pt-3 border-t border-border/60 gap-2 sm:gap-0 mt-2">
               <Button
                 variant="ghost"
                 onClick={() => setCreateModalOpen(false)}
@@ -555,5 +554,6 @@ export default function Dashboard() {
         </Dialog>
       </div>
     </NavbarLayout>
+    </AuthGuard>
   );
 }

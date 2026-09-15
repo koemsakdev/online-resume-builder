@@ -4,6 +4,7 @@ import React from "react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { Separator } from "../ui/separator";
 import { ProfileAccount } from "../ui/profile-account";
+import { ModeToggle } from "../ui/mode-toggle";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -48,7 +49,9 @@ const NavbarLayout = ({ children, title }: NavbarLayoutProps) => {
         </div>
 
         {/* Right Side User Profile & Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          <ModeToggle />
+          <Separator orientation="vertical" className="h-5 hidden sm:block" />
           <ProfileAccount />
         </div>
       </header>

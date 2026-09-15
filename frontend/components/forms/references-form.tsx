@@ -6,13 +6,15 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { Users, Plus, Trash2, Mail, Phone, Building2, Briefcase, HeartHandshake, ShieldCheck } from "lucide-react";
+import { Users, Plus, Trash2, Mail, Phone, Building2, Briefcase, HeartHandshake, ShieldCheck, UserCheck, SkipForward } from "lucide-react";
+import Combobox from "@/components/ui/combobox";
 
 interface ReferencesFormProps {
   referencesData: ReferenceItem[];
   updateArrayItem: (index: number, key: string, value: any) => void;
   addArrayItem: (item: ReferenceItem) => void;
   removeArrayItem: (index: number) => void;
+  onSkipSection?: () => void;
 }
 
 const ReferencesForm = ({
@@ -20,6 +22,7 @@ const ReferencesForm = ({
   updateArrayItem,
   addArrayItem,
   removeArrayItem,
+  onSkipSection,
 }: ReferencesFormProps) => {
 
   const handleAddDefault = () => {
@@ -46,21 +49,40 @@ const ReferencesForm = ({
 
   return (
     <div className="px-5 pt-5 pb-8 space-y-6">
-      <div>
-        <h2 className="text-xl lg:text-2xl font-bold tracking-tight">Professional References</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Add mentors, managers, or colleagues who can endorse your qualifications and character.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl lg:text-2xl font-bold tracking-tight">Professional References</h2>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-medium border border-border">
+              Optional
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground mt-1">
+            Add mentors, managers, or colleagues who can endorse your qualifications and character.
+          </p>
+        </div>
+        {onSkipSection && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onSkipSection}
+            className="text-xs text-muted-foreground hover:text-foreground shrink-0 rounded-xl"
+          >
+            <span>Skip Section</span>
+            <SkipForward className="w-3.5 h-3.5 ml-1" />
+          </Button>
+        )}
       </div>
       <Separator />
 
       {/* Pro Tip Box */}
-      <div className="flex items-start gap-3 p-3.5 rounded-2xl border border-cyan-500/30 bg-cyan-500/5 text-xs text-slate-300">
-        <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+      <div className="flex items-start gap-3 p-3.5 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 text-xs text-foreground/90">
+        <ShieldCheck className="w-5 h-5 text-cyan-500 shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <span className="font-bold text-cyan-300">Privacy Tip</span>
+          <span className="font-bold text-cyan-700 dark:text-cyan-300">Privacy Tip</span>
           <p className="text-muted-foreground leading-relaxed">
-            Most hiring managers check references in final stages. You can list specific managers, or click below to add a standard &quot;Available Upon Request&quot; notice.
+            Most hiring managers check references in final stages. If you prefer to provide references only upon interview request, you can skip this section or click &quot;Available Upon Request&quot;.
           </p>
         </div>
       </div>
@@ -71,7 +93,7 @@ const ReferencesForm = ({
           <div className="space-y-1">
             <p className="text-sm font-semibold text-foreground">No references added yet</p>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-              Add past direct managers, technical leads, or professors who can advocate for your capabilities.
+              You can add professional references, use the standard placeholder, or skip this section entirely.
             </p>
           </div>
           <div className="flex items-center justify-center gap-3 pt-2 flex-wrap">
@@ -93,6 +115,17 @@ const ReferencesForm = ({
             >
               Add &quot;Available Upon Request&quot;
             </Button>
+            {onSkipSection && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={onSkipSection}
+                className="text-xs text-muted-foreground hover:text-cyan-300 rounded-xl"
+              >
+                Skip This Section
+              </Button>
+            )}
           </div>
         </div>
       ) : (
@@ -129,7 +162,9 @@ const ReferencesForm = ({
               {/* Reference Name & Role */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Referee Full Name *</Label>
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 h-5 whitespace-nowrap">
+                    <UserCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Referee Full Name *
+                  </Label>
                   <Input
                     type="text"
                     value={ref.name || ""}
@@ -139,8 +174,8 @@ const ReferencesForm = ({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1">
-                    <Briefcase className="w-3.5 h-3.5 text-cyan-400" /> Job Title / Position *
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 h-5 whitespace-nowrap">
+                    <Briefcase className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Job Title / Position *
                   </Label>
                   <Input
                     type="text"
@@ -155,8 +190,8 @@ const ReferencesForm = ({
               {/* Company & Relationship */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1">
-                    <Building2 className="w-3.5 h-3.5 text-purple-400" /> Company / Organization *
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 h-5 whitespace-nowrap">
+                    <Building2 className="w-3.5 h-3.5 text-purple-400 shrink-0" /> Company / Organization *
                   </Label>
                   <Input
                     type="text"
@@ -167,15 +202,22 @@ const ReferencesForm = ({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1">
-                    <HeartHandshake className="w-3.5 h-3.5 text-rose-400" /> Relationship / Context
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 h-5 whitespace-nowrap">
+                    <HeartHandshake className="w-3.5 h-3.5 text-rose-400 shrink-0" /> Relationship / Context
                   </Label>
-                  <Input
-                    type="text"
+                  <Combobox
+                    options={[
+                      "Former Direct Manager",
+                      "Senior Colleague / Team Member",
+                      "VP / Department Lead",
+                      "University Professor / Academic Advisor",
+                      "Client / Business Partner",
+                    ]}
                     value={ref.relationship || ""}
-                    onChange={(e) => updateArrayItem(index, "relationship", e.target.value)}
-                    placeholder="e.g. Former Direct Manager for 3 years"
-                    className="rounded-xl text-xs"
+                    onChange={(val) => updateArrayItem(index, "relationship", val)}
+                    placeholder="e.g. Former Direct Manager"
+                    searchPlaceholder="Search or type relationship..."
+                    allowCustom={true}
                   />
                 </div>
               </div>
@@ -183,8 +225,8 @@ const ReferencesForm = ({
               {/* Email & Phone */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1">
-                    <Mail className="w-3.5 h-3.5 text-cyan-400" /> Work Email
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 h-5 whitespace-nowrap">
+                    <Mail className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> Work Email
                   </Label>
                   <Input
                     type="email"
@@ -195,8 +237,8 @@ const ReferencesForm = ({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1">
-                    <Phone className="w-3.5 h-3.5 text-emerald-400" /> Phone Number
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 h-5 whitespace-nowrap">
+                    <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Phone Number
                   </Label>
                   <Input
                     type="tel"

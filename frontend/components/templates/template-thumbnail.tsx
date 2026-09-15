@@ -97,14 +97,31 @@ export const TemplateThumbnail = ({
   const [scale, setScale] = useState(0.28);
 
   // Merge sample data with any provided resume data
+  const candidateName =
+    (resumeData as any)?.fullName?.trim() ||
+    resumeData?.name?.trim() ||
+    (resumeData?.title && !resumeData?.title.toLowerCase().includes("resume")
+      ? resumeData.title
+      : DEFAULT_SAMPLE_DATA.name);
+
+  const candidateTitle =
+    (resumeData as any)?.jobTitle?.trim() ||
+    (resumeData?.title && !resumeData?.title.toLowerCase().includes("resume")
+      ? resumeData.title
+      : DEFAULT_SAMPLE_DATA.title);
+
   const mergedData: CVData = {
     ...DEFAULT_SAMPLE_DATA,
     ...resumeData,
-    name: resumeData?.name?.trim() || DEFAULT_SAMPLE_DATA.name,
-    title: resumeData?.title?.trim() || DEFAULT_SAMPLE_DATA.title,
+    name: candidateName,
+    title: candidateTitle,
     contact: {
       ...DEFAULT_SAMPLE_DATA.contact,
       ...(resumeData?.contact || {}),
+      profile:
+        resumeData?.contact?.profile ||
+        (resumeData as any)?.contactInfo?.profileImageUrl ||
+        DEFAULT_SAMPLE_DATA.contact.profile,
     },
     skills:
       resumeData?.skills && resumeData.skills.length > 0
@@ -142,16 +159,16 @@ export const TemplateThumbnail = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full aspect-[1/1.38] overflow-hidden bg-white select-none pointer-events-none rounded-t-xl border-b border-border/50 shadow-inner ${className}`}
+      className={`relative w-full aspect-[1/1.414] overflow-hidden bg-white select-none pointer-events-none rounded-t-xl border-b border-border/40 shadow-sm ${className}`}
     >
       <div
         style={{
           width: "800px",
-          height: "1100px",
+          height: "1131px",
           transform: `scale(${scale})`,
           transformOrigin: "top left",
         }}
-        className="absolute top-0 left-0 bg-white text-slate-900 pointer-events-none"
+        className="absolute top-0 left-0 bg-white text-slate-900 pointer-events-none overflow-hidden"
       >
         <ResumePreview
           templateName={templateId}

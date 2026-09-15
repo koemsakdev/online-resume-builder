@@ -132,7 +132,7 @@ const socialLogin = async (req, res) => {
 
         if (user) {
             // Update third party info if available
-            if (!user.profileImageUrl && profileImageUrl) {
+            if (profileImageUrl) {
                 user.profileImageUrl = profileImageUrl;
             }
             if (provider && (!user.provider || user.provider === 'local')) {
@@ -230,8 +230,11 @@ const googleAuth = async (req, res) => {
         let user = await User.findOne({ email: normalizedEmail });
 
         if (user) {
-            if (!user.profileImageUrl && picture) {
+            if (picture) {
                 user.profileImageUrl = picture;
+            }
+            if (name && (!user.name || user.name === 'Google User' || user.name === 'User')) {
+                user.name = name;
             }
             if (!user.provider || user.provider === 'local') {
                 user.provider = 'google';

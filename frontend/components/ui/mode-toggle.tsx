@@ -1,40 +1,53 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Monitor, Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
-
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import * as React from "react";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme()
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-9 w-9 rounded-xl border border-border/60"
+        aria-label="Toggle theme"
+      >
+        <Sun className="h-4 w-4 text-muted-foreground" />
+      </Button>
+    );
+  }
+
+  const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const isDark = currentTheme === "dark";
+
+  const toggleTheme = () => {
+    setTheme(isDark ? "light" : "dark");
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild className="focus:outline-none focus:ring-0 border-none">
-        <Button variant="secondary" size="icon" className="focus:outline-none focus-visible:ring-0 rounded-full">
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-orange-600" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-sky-500" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("light")}>
-          <Sun className="space-x-1 h-4 w-4" /> Light
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("dark")}>
-          <Moon className="space-x-1 h-4 w-4" /> Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("system")}>
-          <Monitor className="space-x-1 h-4 w-4" /> System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={toggleTheme}
+      className="h-9 w-9 rounded-xl border border-border/60 hover:bg-muted/60 transition-colors"
+      title={`Switch to ${isDark ? "Light" : "Dark"} mode`}
+      aria-label={`Switch to ${isDark ? "Light" : "Dark"} mode`}
+    >
+      {isDark ? (
+        <Sun className="h-4 w-4 text-amber-400 transition-transform duration-200 hover:rotate-45" />
+      ) : (
+        <Moon className="h-4 w-4 text-sky-500 transition-transform duration-200 hover:-rotate-12" />
+      )}
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  );
 }

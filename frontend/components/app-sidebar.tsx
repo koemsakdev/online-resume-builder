@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext } from "react";
+import React from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -17,53 +17,19 @@ import {
 } from "./ui/sidebar";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { UserContext } from "@/contexts/useContext";
 import {
   LayoutDashboard,
   LayoutTemplate,
   Plus,
-  LogOut,
-  Moon,
-  Sun,
   X,
-  ShieldCheck,
-  ChevronRight,
 } from "lucide-react";
 import { Button } from "./ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useTheme } from "next-themes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 
 export const AppSidebar = () => {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, clearUser } = useContext(UserContext);
   const { isMobile, setOpenMobile } = useSidebar();
-  const { theme, setTheme } = useTheme();
-
-  const handleLogout = () => {
-    clearUser();
-    router.push("/");
-  };
-
-  const getInitials = (name?: string) => {
-    if (!name) return "U";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
-  };
 
   const primaryNavItems = [
     {
@@ -195,99 +161,14 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Sidebar Footer with User Profile & Controls */}
-      <SidebarFooter className="p-3 border-t border-border/40 bg-card/60">
-        {user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center justify-between w-full p-2 rounded-xl hover:bg-muted/50 transition-colors text-left group">
-                <div className="flex items-center gap-2.5 overflow-hidden">
-                  <Avatar className="w-8 h-8 border border-cyan-500/30 shrink-0 shadow-sm">
-                    <AvatarImage
-                      src={user?.profileImageUrl || ""}
-                      alt={user?.name || "User"}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="bg-cyan-500/20 text-cyan-300 font-bold text-xs">
-                      {getInitials(user?.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-                    <span className="text-xs font-bold text-foreground truncate">
-                      {user?.name || "Member"}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground truncate">
-                      {user?.email || "Account"}
-                    </span>
-                  </div>
-                </div>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-data-[collapsible=icon]:hidden" />
-              </button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent
-              align="start"
-              side="top"
-              className="w-56 p-2 rounded-xl border border-border/80 bg-card/95 backdrop-blur-md shadow-2xl space-y-1"
-            >
-              <DropdownMenuLabel className="p-2">
-                <p className="text-xs font-bold text-foreground">
-                  {user?.name || "Member"}
-                </p>
-                <p className="text-[11px] text-muted-foreground truncate font-normal">
-                  {user?.email}
-                </p>
-                {user?.provider === "google" && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 mt-1">
-                    <ShieldCheck className="w-3 h-3" /> Google Verified
-                  </span>
-                )}
-              </DropdownMenuLabel>
-
-              <DropdownMenuSeparator />
-
-              {/* Theme Toggle */}
-              <DropdownMenuItem
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="cursor-pointer flex items-center justify-between text-xs py-2 rounded-lg"
-              >
-                <div className="flex items-center gap-2">
-                  {theme === "dark" ? (
-                    <Moon className="w-4 h-4 text-cyan-400" />
-                  ) : (
-                    <Sun className="w-4 h-4 text-amber-400" />
-                  )}
-                  <span>Toggle Theme</span>
-                </div>
-                <span className="text-[10px] uppercase font-semibold text-muted-foreground">
-                  {theme === "dark" ? "Dark" : "Light"}
-                </span>
-              </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
-
-              {/* Logout */}
-              <DropdownMenuItem
-                onClick={handleLogout}
-                className="cursor-pointer text-xs py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg flex items-center gap-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Sign Out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className="w-full text-xs rounded-xl border-border/80 hover:bg-muted/50"
-          >
-            <Link href="/sign-in" onClick={() => isMobile && setOpenMobile(false)}>
-              Sign In
-            </Link>
-          </Button>
-        )}
+      {/* Sidebar Footer */}
+      <SidebarFooter className="p-3 border-t border-border/40 bg-card/40">
+        <div className="flex items-center justify-between px-2 py-1 text-[11px] text-muted-foreground">
+          <span className="font-semibold text-foreground/80">ResumeRise</span>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 font-bold">
+            v1.0
+          </span>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
